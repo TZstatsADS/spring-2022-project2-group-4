@@ -1,0 +1,13 @@
+name: apps
+title: apps
+username:
+account: prj2-group4
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5673263
+bundleId: 5588311
+url: https://prj2-group4.shinyapps.io/apps/
+when: 1645071204.62325
+lastSyncTime: 1645071204.62326
+asMultiple: FALSE
+asStatic: FALSE
