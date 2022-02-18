@@ -1,74 +1,60 @@
+library(shiny)
+library(shiny)
+library(dplyr)
+library(tidyverse)
+library(DT)
+library(ggplot2)
+library(lubridate)
+library(plotly)
+library(hrbrthemes)
+library(highcharter)
+library(RColorBrewer)
+if(!require(fontawesome)) devtools::install_github("rstudio/fontawesome")
+library(geojsonio)
+library(readr)
+library(leaflet)
+library(shinythemes)
+library(shinyWidgets)
 
-if (!require("shiny")) {
-  install.packages("shiny")
-  library(shiny)
-}
-if (!require("shinyWidgets")) {
-  install.packages("shinyWidgets")
-  library(shinyWidgets)
-}
-if (!require("shinythemes")) {
-  install.packages("shinythemes")
-  library(shinythemes)
-}
-if (!require("leaflet")) {
-  install.packages("leaflet")
-  library(leaflet)
-}
-if (!require("leaflet.extras")) {
-  install.packages("leaflet.extras")
-  library(leaflet.extras)
-}
+backgroundpic <- "https://images.unsplash.com/photo-1609945648638-cefddce6e6d8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2532&q=80" 
 
-# Define UI for application that draws a histogram
+
 shinyUI(
-    navbarPage(strong("Citi Bike Study",style="color: white;"), 
-               theme=shinytheme("cerulean"), # select your themes https://rstudio.github.io/shinythemes/
-#------------------------------- tab panel - Maps ---------------------------------
-                tabPanel("Maps",
-                         icon = icon("map-marker-alt"), #choose the icon for
-                         div(class = 'outer',
-                        # side by side plots
-                        fluidRow(
-                                splitLayout(cellWidths = c("50%", "50%"), 
-                                             leafletOutput("left_map",width="100%",height=1200),
-                                             leafletOutput("right_map",width="100%",height=1200))),
-                        #control panel on the left
-                        absolutePanel(id = "control", class = "panel panel-default", fixed = TRUE, draggable = TRUE,
-                                      top = 200, left = 50, right = "auto", bottom = "auto", width = 250, height = "auto",
-                                      tags$h4('Citi Bike Activity Comparison'), 
-                                      tags$br(),
-                                      tags$h5('Pre-covid(Left) Right(Right)'), 
-                                      prettyRadioButtons(
-                                                      inputId = "adjust_score",
-                                                      label = "Score List:", 
-                                                      choices = c("start_cnt", 
-                                                                  "end_cnt", 
-                                                                  "day_diff_absolute",
-                                                                  "day_diff_percentage"),
-                                                      inline = TRUE, 
-                                                      status = "danger",
-                                                      fill = TRUE
-                                                        ),
-                                      awesomeRadio("adjust_time", 
-                                                   label="Time",
-                                                    choices =c("Overall",
-                                                               "Weekday", 
-                                                               "Weekend"), 
-                                                    selected = "Overall",
-                                                    status = "warning"),
-                                      # selectInput('adjust_weather',
-                                      #             label = 'Adjust for Weather',
-                                      #             choices = c('Yes','No'), 
-                                      #             selected = 'Yes'
-                                      #             ),
-                                      style = "opacity: 0.80"
+  fluidPage(
+    navbarPage(theme = shinytheme("sandstone"), collapsible = TRUE,
+               title= "",
+               id="nav",
+               windowTitle = "The NYC Department of Homeless Services during the COVID-19 Pandemic",
+               header = tagList(
+                 useShinydashboard()
+               ),
+
+               
+               tabPanel('Park Reopen Situation', icon = icon("viruses"),
+                        titlePanel("NYC Park Location and Reopen Status"),
+                        
+                        leafletOutput("map", width="100%", height=700),
+                        
+                        absolutePanel(id = "choices", class = "panel panel-default",
+                                      top = 160, left = 40, width = 240, fixed=FALSE,
+                                      draggable = TRUE, height = 470,
+                                      tags$h1("Choose the Parks",
+                                              align = "left", style = "font-size:27px"),
                                       
-                                ), #Panel Control - Closing
-                            ) #Maps - Div closing
-                        ) #tabPanel maps closing
-   
-
-
-    ) #navbarPage closing  
-) #Shiny UI closing    
+                                      selectInput("time", "Covid-19 Peak vs Present", choices=c("Covid-19 Peak","Present"),width = 230,selected = "Covid-19 Peak"),
+                                      radioButtons("radio","",choices = c("Select All","Clear Map")),
+                                      actionButton("ath", "Athletic Facilities",icon=icon("bicycle", lib = "font-awesome"),style='padding:8px; font-size:80%'),
+                                      br(),
+                                      actionButton("playgrounds", label = "Playgrounds", value = FALSE,icon=icon("running", lib = "font-awesome"),style='padding:8px; font-size:80%'),
+                                      br(),
+                                      actionButton("adult", label = "Adult Exercise Equipment", icon=icon("dumbbell", lib = "font-awesome"),style='padding:8px; font-size:80%'),
+                                      br(),
+                                      actionButton("dogruns", label = "Dog Runs", icon("dog", lib = "font-awesome"),style='padding:8px; font-size:80%'),
+                                      br(),
+                                      actionButton("comfort", label = "Comfort Stations", icon=icon("steam", lib = "font-awesome"),style='padding:8px; font-size:80%'),
+                                      br(),
+                                      actionButton("skate", "Skate Parks",icon=icon("skating", lib = "font-awesome"),style='padding:8px; font-size:80%'),
+                                      style = "opacity: 0.85"))
+    )
+  )
+)
