@@ -1,21 +1,10 @@
-
-
+#========================================================================================================================================================================================
+#Package
 library(shiny)
 library(dplyr)
 library(tidyverse)
-library(DT)
-library(ggplot2)
-library(lubridate)
-library(plotly)
-library(hrbrthemes)
-library(highcharter)
-library(RColorBrewer)
-if(!require(fontawesome)) devtools::install_github("rstudio/fontawesome")
-library(geojsonio)
-library(readr)
-library(leaflet)
-
 #========================================================================================================================================================================================
+# Data Loading
 skate_parks <- read.csv(url("https://data.cityofnewyork.us/resource/pvvr-75zk.csv"), 
                         as.is = TRUE)
 dog_runs <- read.csv(url("https://data.cityofnewyork.us/resource/wswf-9pts.csv"), 
@@ -30,8 +19,6 @@ ath_faci <- ath_faci[ath_faci$status!='',]
 comfort <- read.csv(url("https://data.cityofnewyork.us/resource/i5n2-q8ck.csv"), 
                     as.is = TRUE)
 event <- read.csv("../data/NYC_Permitted_Event_Information.csv",as.is = TRUE)
-
-
 
 # Extract Longitude & Latitude
 latlong <- function(x){
@@ -50,7 +37,6 @@ latlong2 <- function(x){
 }
 playgrounds <- latlong(playgrounds)
 adult_exe <- latlong(adult_exe)
-
 
 ath_faci <- latlong2(ath_faci)
 dog_runs <- latlong2(dog_runs)
@@ -136,327 +122,345 @@ skate_parks <- skate_parks %>%
                                        "Installed", "Not Installed"))
     ))
 
-
-
-
-
-
-
-
+event <- event %>%
+    mutate(popup = paste(sep = "<br/>",
+                         paste0("<b>Event Name: </b>",event$Event.Name),
+                         paste0("<b>Event Datae: </b>",substr(event$Start.Date.Time,1,10)),
+                         paste0("<b>Event Type: </b>",event$Event.Type),
+                         paste0("<b>Event Location: </b>",event$Event.Location)
+    ))
 #========================================================================================================================================================================================
-
-
-
+#Park Tab
 shinyServer(function(input, output) {
+    
+    #Map
     output$map <- renderLeaflet({
         leaflet() %>%
             addTiles() %>%
-            addProviderTiles("CartoDB.Voyager") %>%  
-            setView(lng = -73.935242, lat = 40.730610, zoom = 10) %>%
+            addProviderTiles("CartoDB.Positron") %>%  
+            setView(lng = -73.935242, lat = 40.730610, zoom = 11) %>%
             addMarkers(lng = -73.9618416, lat = 40.8081563,popup = "Here's Columbia!") 
     })
     
-    observeEvent(input$time=="Present",{
-            observeEvent(input$dogruns,{
-                proxy <- leafletProxy("map", data = dog_runs)
-                palette_dog = c("black","blue", "yellow")
-                color <- colorFactor(palette =palette_dog, dog_runs$status)
-                proxy %>% clearControls()
-                
-                leafletProxy("map", data = dog_runs) %>%
-                    clearShapes() %>%
-                    clearMarkers() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%
-                    setView(lng = -73.935242, lat = 40.730610, zoom = 10)
-                
-                leafletProxy("map", data = dog_runs)%>%
-                    clearShapes() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%    
-                    addCircleMarkers(~longitude, ~latitude, radius=6,
-                                     color = ~color(status),
-                                     label = paste(dog_runs$propertyname, '-', dog_runs$name))%>%
-                    addLegend("bottomright",
-                              pal = color,
-                              values = dog_runs$status,
-                              title = "Status",
-                              opacity = 0.85) 
-            })
-            observeEvent(input$comfort,{
-                proxy <- leafletProxy("map", data = comfort)
-                palette <-  c("green","black","blue", "yellow")
-                color <- colorFactor(palette =palette, comfort$status)
-                proxy %>% clearControls()
-                
-                leafletProxy("map", data = comfort) %>%
-                    clearShapes() %>%
-                    clearMarkers() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%
-                    setView(lng = -73.935242, lat = 40.730610, zoom = 10)
-                
-                leafletProxy("map", data = comfort)%>%
-                    clearShapes() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%    
-                    addCircleMarkers(~longitude, ~latitude, radius=6,
-                                     color = ~color(status),
-                                     label = paste(comfort$longitude, '-', comfort$latitude))%>%
-                    addLegend("bottomright",
-                              pal = color,
-                              values = comfort$status,
-                              title = "Status",
-                              opacity = 0.85)  
-            })
-            observeEvent(input$skate,{
-                proxy <- leafletProxy("map", data = skate_parks)
-                palette <-  c("green", "yellow")
-                color <- colorFactor(palette =palette, skate_parks$status)
-                proxy %>% clearControls()
-                
-                leafletProxy("map", data = skate_parks) %>%
-                    clearShapes() %>%
-                    clearMarkers() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%
-                    setView(lng = -73.935242, lat = 40.730610, zoom = 10)
-                
-                leafletProxy("map", data = skate_parks)%>%
-                    clearShapes() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%    
-                    addCircleMarkers(~longitude, ~latitude, radius=6,
-                                     color = ~color(status),
-                                     label = paste(skate_parks$propname))%>%
-                    addLegend("bottomright",
-                              pal = color,
-                              values = skate_parks$status,
-                              title = "Status",
-                              opacity = 0.85) 
-            })
-            observeEvent(input$playgrounds,{
-                proxy <- leafletProxy("map", data = playgrounds)
-                palette <-  c("green","black","blue", "yellow")
-                color <- colorFactor(palette =palette, playgrounds$status)
-                proxy %>% clearControls()
-                
-                leafletProxy("map", data = playgrounds) %>%
-                    clearShapes() %>%
-                    clearMarkers() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%
-                    setView(lng = -73.935242, lat = 40.730610, zoom = 10)
-                
-                leafletProxy("map", data = playgrounds)%>%
-                    clearShapes() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%    
-                    addCircleMarkers(~longitude, ~latitude, radius=6,
-                                     color = ~color(status),
-                                     label = paste(playgrounds$propname))%>%
-                    addLegend("bottomright",
-                              pal = color,
-                              values = playgrounds$status,
-                              title = "Status",
-                              opacity = 0.85)  
-            })
-            observeEvent(input$adult,{
-                proxy <- leafletProxy("map", data = adult_exe)
-                palette <-  c("green","blue", "yellow")
-                color <- colorFactor(palette =palette, adult_exe$status)
-                proxy %>% clearControls()
-                
-                leafletProxy("map", data = adult_exe) %>%
-                    clearShapes() %>%
-                    clearMarkers() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%
-                    setView(lng = -73.935242, lat = 40.730610, zoom = 10)
-                
-                leafletProxy("map", data = adult_exe)%>%
-                    clearShapes() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%    
-                    addCircleMarkers(~longitude, ~latitude, radius=6,
-                                     color = ~color(status),
-                                     label = paste(adult_exe$propname))%>%
-                    addLegend("bottomright",
-                              pal = color,
-                              values = adult_exe$status,
-                              title = "Status",
-                              opacity = 0.85)  
-            })
-            observeEvent(input$ath,{
-                proxy <- leafletProxy("map", data = ath_faci)
-                palette <-  c("green","black","blue", "yellow")
-                color <- colorFactor(palette =palette, ath_faci$status)
-                proxy %>% clearControls()
-                
-                leafletProxy("map", data = ath_faci) %>%
-                    clearShapes() %>%
-                    clearMarkers() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%
-                    setView(lng = -73.935242, lat = 40.730610, zoom = 10)
-                
-                leafletProxy("map", data = ath_faci)%>%
-                    clearShapes() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%    
-                    addCircleMarkers(~longitude, ~latitude, radius=6,
-                                     color = ~color(status),
-                                     label = paste(ath_faci$propertyname,",",ath_faci$primarysport))%>%
-                    addLegend("bottomright",
-                              pal = color,
-                              values = ath_faci$status,
-                              title = "Status",
-                              opacity = 0.85)  
-            })
-        })
-        
-    observeEvent(input$time=="Covid-19 Peak",{
-            observeEvent(input$dogruns,{
-                proxy <- leafletProxy("map", data = dog_runs)
-                palette_dog = c("black","yellow")
-                color <- colorFactor(palette =palette_dog, dog_runs$peak_status)
-                proxy %>% clearControls()
-                
-                leafletProxy("map", data = dog_runs) %>%
-                    clearShapes() %>%
-                    clearMarkers() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%
-                    setView(lng = -73.935242, lat = 40.730610, zoom = 10)
-                
-                leafletProxy("map", data = dog_runs)%>%
-                    clearShapes() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%    
-                    addCircleMarkers(~longitude, ~latitude, radius=6,
-                                     color = ~color(peak_status),
-                                     label = paste(dog_runs$propertyname, '-', dog_runs$name))%>%
-                    addLegend("bottomright",
-                              pal = color,
-                              values = dog_runs$peak_status,
-                              title = "Status",
-                              opacity = 0.85) 
-            })
-            observeEvent(input$comfort,{
-                proxy <- leafletProxy("map", data = comfort)
-                palette <-  c("green","black","blue", "yellow")
-                color <- colorFactor(palette =palette, comfort$peak_status)
-                proxy %>% clearControls()
-                
-                leafletProxy("map", data = comfort) %>%
-                    clearShapes() %>%
-                    clearMarkers() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%
-                    setView(lng = -73.935242, lat = 40.730610, zoom = 10)
-                
-                leafletProxy("map", data = comfort)%>%
-                    clearShapes() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%    
-                    addCircleMarkers(~longitude, ~latitude, radius=6,
-                                     color = ~color(peak_status),
-                                     label = paste(comfort$longitude, '-', comfort$latitude))%>%
-                    addLegend("bottomright",
-                              pal = color,
-                              values = comfort$peak_status,
-                              title = "Status",
-                              opacity = 0.85)  
-            })
-            observeEvent(input$skate,{
-                proxy <- leafletProxy("map", data = skate_parks)
-                palette <-  c("black","blue", "yellow")
-                color <- colorFactor(palette =palette, skate_parks$peak_status)
-                proxy %>% clearControls()
-                
-                leafletProxy("map", data = skate_parks) %>%
-                    clearShapes() %>%
-                    clearMarkers() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%
-                    setView(lng = -73.935242, lat = 40.730610, zoom = 10)
-                
-                leafletProxy("map", data = skate_parks)%>%
-                    clearShapes() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%    
-                    addCircleMarkers(~longitude, ~latitude, radius=6,
-                                     color = ~color(peak_status),
-                                     label = paste(skate_parks$propname))%>%
-                    addLegend("bottomright",
-                              pal = color,
-                              values = skate_parks$peak_status,
-                              title = "Status",
-                              opacity = 0.85) 
-            })
-            observeEvent(input$playgrounds,{
-                proxy <- leafletProxy("map", data = playgrounds)
-                palette <-  c("green","black","blue", "yellow")
-                color <- colorFactor(palette =palette, playgrounds$peak_status)
-                proxy %>% clearControls()
-                
-                leafletProxy("map", data = playgrounds) %>%
-                    clearShapes() %>%
-                    clearMarkers() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%
-                    setView(lng = -73.935242, lat = 40.730610, zoom = 10)
-                
-                leafletProxy("map", data = playgrounds)%>%
-                    clearShapes() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%    
-                    addCircleMarkers(~longitude, ~latitude, radius=6,
-                                     color = ~color(peak_status),
-                                     label = paste(playgrounds$propname))%>%
-                    addLegend("bottomright",
-                              pal = color,
-                              values = playgrounds$peak_status,
-                              title = "Status",
-                              opacity = 0.85)  
-            })
-            observeEvent(input$adult,{
-                proxy <- leafletProxy("map", data = adult_exe)
-                palette <-  c("green","black","blue", "yellow")
-                color <- colorFactor(palette =palette, adult_exe$peak_status)
-                proxy %>% clearControls()
-                
-                leafletProxy("map", data = adult_exe) %>%
-                    clearShapes() %>%
-                    clearMarkers() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%
-                    setView(lng = -73.935242, lat = 40.730610, zoom = 10)
-                
-                leafletProxy("map", data = adult_exe)%>%
-                    clearShapes() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%    
-                    addCircleMarkers(~longitude, ~latitude, radius=6,
-                                     color = ~color(peak_status),
-                                     label = paste(adult_exe$propname))%>%
-                    addLegend("bottomright",
-                              pal = color,
-                              values = adult_exe$peak_status,
-                              title = "Status",
-                              opacity = 0.85)  
-            })
-            observeEvent(input$ath,{
-                proxy <- leafletProxy("map", data = ath_faci)
-                palette <-  c("green","black","blue", "yellow")
-                color <- colorFactor(palette =palette, ath_faci$peak_status)
-                proxy %>% clearControls()
-                
-                leafletProxy("map", data = ath_faci) %>%
-                    clearShapes() %>%
-                    clearMarkers() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%
-                    setView(lng = -73.935242, lat = 40.730610, zoom = 10)
-                
-                leafletProxy("map", data = ath_faci)%>%
-                    clearShapes() %>%
-                    addProviderTiles("CartoDB.Voyager") %>%    
-                    addCircleMarkers(~longitude, ~latitude, radius=6,
-                                     color = ~color(peak_status),
-                                     label = paste(ath_faci$propertyname,",",ath_faci$primarysport))%>%
-                    addLegend("bottomright",
-                              pal = color,
-                              values = ath_faci$speak_status,
-                              title = "Status",
-                              opacity = 0.85)  
-            })
-        })
-    observeEvent(input$radio=="Clear Map",{
-        proxy <- leafletProxy("map", data = dog_runs)
-        proxy %>% clearControls()
-        leafletProxy("map", data = dog_runs) %>%
-            clearShapes() %>%
-            clearMarkers() %>%
-            addProviderTiles("CartoDB.Voyager") %>%
-            setView(lng = -73.935242, lat = 40.730610, zoom = 10)
+    #Dog Runs Button
+    observeEvent(input$dogruns,{
+        #For Present Map
+        if(input$time=="Present"){
+            #Set Color
+            palette_dog = c("black","blue", "yellow")
+            color <- colorFactor(palette =palette_dog, dog_runs$status)
+            #Add Markers
+            leafletProxy("map", data = dog_runs) %>%
+                clearShapes()  %>% 
+                clearControls()%>%
+                clearMarkers() %>%
+                addProviderTiles("CartoDB.Positron") %>%
+                setView(lng = -73.935242, lat = 40.730610, zoom = 11)%>%    
+                addCircleMarkers(~longitude, ~latitude, radius=6,
+                                 color = ~color(status),
+                                 label = paste(dog_runs$propertyname, '-', dog_runs$name),
+                                 popup = ~popup)%>%
+                addLegend("bottomleft",
+                          pal = color,
+                          values = dog_runs$status,
+                          title = "Status",
+                          opacity = 0.85)
+        }
+        #For Covid-19 Peak Map
+        else{
+            #Set Color
+            palette_dog = c("black","yellow")
+            color <- colorFactor(palette =palette_dog, dog_runs$peak_status)
+            #Add Markers
+            leafletProxy("map", data = dog_runs) %>%
+                clearShapes() %>%
+                clearMarkers() %>% 
+                clearControls()%>%
+                addProviderTiles("CartoDB.Positron") %>%
+                setView(lng = -73.935242, lat = 40.730610, zoom = 11)%>%    
+                addCircleMarkers(~longitude, ~latitude, radius=6,
+                                 color = ~color(peak_status),
+                                 label = paste(dog_runs$propertyname, '-', dog_runs$name),
+                                 popup = ~popup)%>%
+                addLegend("bottomleft",
+                          pal = color,
+                          values = dog_runs$peak_status,
+                          title = "Status",
+                          opacity = 0.85) 
+        }
     })
+    
+    #Athletic Facilities Button
+    observeEvent(input$ath,{
+        #For Present Map
+        if(input$time=="Present"){
+            #Set Color
+            palette <-  c("green","black","blue", "yellow")
+            color <- colorFactor(palette =palette, ath_faci$status)
+            #Add Markers
+            leafletProxy("map", data = ath_faci) %>%
+                clearShapes() %>%
+                clearMarkers() %>% 
+                clearControls()%>%
+                addProviderTiles("CartoDB.Positron") %>%
+                setView(lng = -73.935242, lat = 40.730610, zoom = 11)%>%    
+                addCircleMarkers(~longitude, ~latitude, radius=6,
+                                 color = ~color(status),
+                                 label = paste(ath_faci$propname,",",ath_faci$primarysport),
+                                 popup = ~popup)%>%
+                addLegend("bottomleft",
+                          pal = color,
+                          values = ath_faci$status,
+                          title = "status",
+                          opacity = 0.85)
+        }
+        #For Covid-19 Peak Map
+        else{
+            #Set Color
+            palette <-  c("green","black","blue", "yellow")
+            color <- colorFactor(palette =palette, ath_faci$peak_status)
+            #Add Markers
+            leafletProxy("map", data = ath_faci) %>%
+                clearShapes() %>%
+                clearMarkers() %>% 
+                clearControls()%>%
+                addProviderTiles("CartoDB.Positron") %>%
+                setView(lng = -73.935242, lat = 40.730610, zoom = 11)%>%    
+                addCircleMarkers(~longitude, ~latitude, radius=6,
+                                 color = ~color(peak_status),
+                                 label = paste(ath_faci$propname,",",ath_faci$primarysport),
+                                 popup = ~popup)%>%
+                addLegend("bottomleft",
+                          pal = color,
+                          values = ath_faci$peak_status,
+                          title = "status",
+                          opacity = 0.85)
+        }
+    })
+    
+    #Comfort Stations Button
+    observeEvent(input$comfort,{
+        #For Present Map
+        if(input$time=="Present"){
+            #Set Color
+            palette <-  c("green","black","blue", "yellow")
+            color <- colorFactor(palette =palette, comfort$status)
+            #Add Markers
+            leafletProxy("map", data = comfort) %>%
+                clearShapes() %>% 
+                clearControls()%>%
+                clearMarkers() %>%
+                addProviderTiles("CartoDB.Positron") %>%
+                setView(lng = -73.935242, lat = 40.730610, zoom = 11)%>%    
+                addCircleMarkers(~longitude, ~latitude, radius=6,
+                                 color = ~color(status),
+                                 label = paste('(',comfort$longitude, ',', comfort$latitude,")"))%>%
+                addLegend("bottomleft",
+                          pal = color,
+                          values = comfort$status,
+                          title = "Status",
+                          opacity = 0.85) 
+        }
+        #For Covid-19 Peak Map
+        else{
+            #Set Color
+            palette <-  c("green","black","blue", "yellow")
+            color <- colorFactor(palette =palette, comfort$peak_status)
+            #Add Markers
+            leafletProxy("map", data = comfort) %>%
+                clearShapes() %>%
+                clearMarkers() %>% 
+                clearControls()%>%
+                addProviderTiles("CartoDB.Positron") %>%
+                setView(lng = -73.935242, lat = 40.730610, zoom = 11) %>%    
+                addCircleMarkers(~longitude, ~latitude, radius=6,
+                                 color = ~color(peak_status),
+                                 label = paste('(',comfort$longitude, ',', comfort$latitude,")"))%>%
+                addLegend("bottomleft",
+                          pal = color,
+                          values = comfort$peak_status,
+                          title = "Status",
+                          opacity = 0.85) 
+        }
+    })
+    
+    #Skate Parks Button
+    observeEvent(input$skate,{
+        #For Present Map
+        if(input$time=="Present"){
+            #Set Color
+            palette <-  c("green", "yellow")
+            color <- colorFactor(palette =palette, skate_parks$status)
+            #Add Markers
+            leafletProxy("map", data = skate_parks) %>%
+                clearShapes() %>%
+                clearMarkers() %>% 
+                clearControls() %>%
+                addProviderTiles("CartoDB.Positron") %>%
+                setView(lng = -73.935242, lat = 40.730610, zoom = 11) %>%    
+                addCircleMarkers(~longitude, ~latitude, radius=6,
+                                 color = ~color(status),
+                                 label = paste(skate_parks$propname),
+                                 popup = ~popup)%>%
+                addLegend("bottomleft",
+                          pal = color,
+                          values = skate_parks$status,
+                          title = "Status",
+                          opacity = 0.85) 
+        }
+        #For Covid-19 Peak Map
+        else{
+            #Set Color
+            palette <-  c("black","green", "yellow")
+            color <- colorFactor(palette =palette, skate_parks$peak_status)
+            #Add Markers
+            leafletProxy("map", data = skate_parks) %>%
+                clearShapes() %>% 
+                clearControls()%>%
+                clearMarkers() %>%
+                addProviderTiles("CartoDB.Positron") %>%
+                setView(lng = -73.935242, lat = 40.730610, zoom = 11) %>%    
+                addCircleMarkers(~longitude, ~latitude, radius=6,
+                                 color = ~color(peak_status),
+                                 label = paste(skate_parks$propname),
+                                 popup = ~popup)%>%
+                addLegend("bottomleft",
+                          pal = color,
+                          values = skate_parks$peak_status,
+                          title = "Status",
+                          opacity = 0.85)
+        }
+    })
+    
+    #Playgrounds Button
+    observeEvent(input$playgrounds,{
+        #For Present Map
+        if(input$time=="Present"){
+            #Set Color
+            palette <-  c("green","black","blue", "yellow")
+            color <- colorFactor(palette =palette, playgrounds$status)
+            #Add Markers
+            leafletProxy("map", data = playgrounds) %>%
+                clearShapes() %>%
+                clearMarkers() %>%
+                clearControls() %>%
+                addProviderTiles("CartoDB.Positron") %>%
+                setView(lng = -73.935242, lat = 40.730610, zoom = 11) %>%
+                addCircleMarkers(~longitude, ~latitude, radius=6,
+                                 color = ~color(status),
+                                 label = paste(playgrounds$propname),
+                                 popup = ~popup)%>%
+                addLegend("bottomleft",
+                          pal = color,
+                          values = playgrounds$status,
+                          title = "Status",
+                          opacity = 0.85)
+        }
+        #For Covid-19 Peak Map
+        else{
+            #Set Color
+            palette <-  c("green","black","blue", "yellow")
+            color <- colorFactor(palette =palette, playgrounds$peak_status)
+            #Add Markers
+            leafletProxy("map", data = playgrounds) %>%
+                clearShapes() %>%
+                clearMarkers() %>%
+                clearControls() %>%
+                addProviderTiles("CartoDB.Positron") %>%
+                setView(lng = -73.935242, lat = 40.730610, zoom = 11)%>%    
+                addCircleMarkers(~longitude, ~latitude, radius=6,
+                                 color = ~color(peak_status),
+                                 label = paste(playgrounds$propname),
+                                 popup = ~popup)%>%
+                addLegend("bottomleft",
+                          pal = color,
+                          values = playgrounds$peak_status,
+                          title = "Status",
+                          opacity = 0.85)
+        }
+    })
+    
+    #Adult Exercise Equipment Button
+    observeEvent(input$adult,{
+        #For Present Map
+        if(input$time=="Present"){
+            #Set Color
+            palette <-  c("green","blue", "yellow")
+            color <- colorFactor(palette =palette, adult_exe$status)
+            #Add Markers
+            leafletProxy("map", data = adult_exe) %>%
+                clearShapes() %>%
+                clearControls() %>%
+                clearMarkers() %>%
+                addProviderTiles("CartoDB.Positron") %>%
+                setView(lng = -73.935242, lat = 40.730610, zoom = 11)%>%
+                addCircleMarkers(~longitude, ~latitude, radius=6,
+                                 color = ~color(status),
+                                 label = paste(adult_exe$propname),
+                                 popup = ~popup)%>%
+                addLegend("bottomleft",
+                          pal = color,
+                          values = adult_exe$status,
+                          title = "Status",
+                          opacity = 0.85)
+        }
+        #For Covid-19 Peak Map
+        else{
+            #Set Color
+            palette <-  c("green","black","blue", "yellow")
+            color <- colorFactor(palette =palette, adult_exe$peak_status)
+            #Add Markers
+            leafletProxy("map", data = adult_exe) %>%
+                clearShapes() %>%
+                clearMarkers() %>%
+                clearControls()%>%
+                addProviderTiles("CartoDB.Positron") %>%
+                setView(lng = -73.935242, lat = 40.730610, zoom = 11)%>%
+                addCircleMarkers(~longitude, ~latitude, radius=6,
+                                 color = ~color(peak_status),
+                                 label = paste(adult_exe$propname),
+                                 popup = ~popup)%>%
+                addLegend("bottomleft",
+                          pal = color,
+                          values = adult_exe$peak_status,
+                          title = "Status",
+                          opacity = 0.85) 
+        }
+    })
+    
+    #Event Button
+    observeEvent(input$event, {
+        #For Present Map
+        if(input$time=="Present"){
+            #Set Color
+            palette <-  c("pink","orange", "green")
+            color <- colorFactor(palette =palette, event$Event.Type)
+            #Add Markers
+            leafletProxy("map", data = event) %>%
+                clearShapes() %>%
+                clearControls()%>%
+                clearMarkers() %>%
+                addProviderTiles("CartoDB.Positron") %>%
+                setView(lng = -73.935242, lat = 40.730610, zoom = 11)%>%
+                addCircleMarkers(~longitude, ~latitude, radius=6,
+                                 color = ~color(Event.Type),
+                                 label = paste(event$propname,",",event$Event.Name),
+                                 popup = ~popup)%>%
+                addLegend("bottomleft",
+                          pal = color,
+                          values = event$Event.Type,
+                          title = "Event Type",
+                          opacity = 0.85) 
+        }
+        #For Covid-19 Peak Map
+        else{
+            leafletProxy("map", data = event) %>%
+                clearShapes() %>%
+                clearControls()%>%
+                clearMarkers() %>%
+                addProviderTiles("CartoDB.Positron") %>%
+                setView(lng = -73.935242, lat = 40.730610, zoom = 11)
+        }
+    })    
 })
 

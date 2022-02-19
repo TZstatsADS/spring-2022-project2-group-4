@@ -1,59 +1,59 @@
-library(shiny)
+#========================================================================================================================================================================================
+#Package
 library(shiny)
 library(dplyr)
 library(tidyverse)
-library(DT)
-library(ggplot2)
-library(lubridate)
-library(plotly)
-library(hrbrthemes)
-library(highcharter)
-library(RColorBrewer)
-if(!require(fontawesome)) devtools::install_github("rstudio/fontawesome")
-library(geojsonio)
-library(readr)
 library(leaflet)
 library(shinythemes)
 library(shinyWidgets)
-
-backgroundpic <- "https://images.unsplash.com/photo-1609945648638-cefddce6e6d8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2532&q=80" 
-
-
+#========================================================================================================================================================================================
+#Park Tab
 shinyUI(
   fluidPage(
+    #Navigation Page
     navbarPage(theme = shinytheme("sandstone"), collapsible = TRUE,
                title= "",
                id="nav",
-               windowTitle = "The NYC Department of Homeless Services during the COVID-19 Pandemic",
+               windowTitle = "",
                header = tagList(
                  useShinydashboard()
                ),
-
-               
-               tabPanel('Park Reopen Situation', icon = icon("viruses"),
+               #Park Page
+               tabPanel('Park Reopen Situation', icon = icon("tree"),
+                        #Title
                         titlePanel("NYC Park Location and Reopen Status"),
-                        
+                        #Map Input
                         leafletOutput("map", width="100%", height=700),
-                        
+                        #Control Pad Input
                         absolutePanel(id = "choices", class = "panel panel-default",
-                                      top = 160, left = 40, width = 240, fixed=FALSE,
-                                      draggable = TRUE, height = 470,
-                                      tags$h1("Choose the Parks",
-                                              align = "left", style = "font-size:27px"),
+                                      top = 190, left = 1150, width = 240, fixed=FALSE,
+                                      draggable = TRUE, height = 600,
                                       
+                                      tags$h1("Control Pad",align = "center", style = "font-size:27px"),
+                                      #Time Selection Input
                                       selectInput("time", "Covid-19 Peak vs Present", choices=c("Covid-19 Peak","Present"),width = 230,selected = "Covid-19 Peak"),
-                                      radioButtons("radio","",choices = c("Select All","Clear Map")),
-                                      actionButton("ath", "Athletic Facilities",icon=icon("bicycle", lib = "font-awesome"),style='padding:8px; font-size:80%'),
+                                      tags$h1("Choose the Parks",align = "left", style = "font-size:15px"),
+                                      #Action Buttons
+                                      actionButton("ath", "Athletic Facilities",icon=icon("bicycle", lib = "font-awesome"),width = 230,style='padding:8px; font-size:80%'),
                                       br(),
-                                      actionButton("playgrounds", label = "Playgrounds", value = FALSE,icon=icon("running", lib = "font-awesome"),style='padding:8px; font-size:80%'),
                                       br(),
-                                      actionButton("adult", label = "Adult Exercise Equipment", icon=icon("dumbbell", lib = "font-awesome"),style='padding:8px; font-size:80%'),
+                                      actionButton("playgrounds", label = "Playgrounds",icon=icon("running", lib = "font-awesome"),width = 230,style='padding:8px; font-size:80%'),
                                       br(),
-                                      actionButton("dogruns", label = "Dog Runs", icon("dog", lib = "font-awesome"),style='padding:8px; font-size:80%'),
                                       br(),
-                                      actionButton("comfort", label = "Comfort Stations", icon=icon("steam", lib = "font-awesome"),style='padding:8px; font-size:80%'),
+                                      actionButton("adult", label = "Adult Exercise Equipment", icon=icon("dumbbell", lib = "font-awesome"),width = 230,style='padding:8px; font-size:80%'),
                                       br(),
-                                      actionButton("skate", "Skate Parks",icon=icon("skating", lib = "font-awesome"),style='padding:8px; font-size:80%'),
+                                      br(),
+                                      actionButton("dogruns", label = "Dog Runs", icon("dog", lib = "font-awesome"),width = 230,style='padding:8px; font-size:80%'),
+                                      br(),
+                                      br(),
+                                      actionButton("comfort", label = "Comfort Stations", icon=icon("steam", lib = "font-awesome"),width = 230,style='padding:8px; font-size:80%'),
+                                      br(),
+                                      br(),
+                                      actionButton("skate", "Skate Parks",icon=icon("skating", lib = "font-awesome"),width = 230,style='padding:8px; font-size:80%'),
+                                      
+                                      tags$h1("Event View (Only Present)",align = "left", style = "font-size:15px"),
+                                      #Event Action Button
+                                      actionButton("event", label = "Event", icon=icon("child", lib = "font-awesome"),width = 230,style='padding:8px; font-size:80%'),
                                       style = "opacity: 0.85"))
     )
   )
