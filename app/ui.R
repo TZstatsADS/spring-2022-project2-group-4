@@ -30,31 +30,24 @@ shinyUI(
                ),
 
                
-               tabPanel('Park Reopen Situation', icon = icon("viruses"),
-                        titlePanel("NYC Park Location and Reopen Status"),
+               tabPanel('Restaurants by Covid Area', icon = icon("viruses"),
+                        titlePanel("Restaurant Location"),
                         
                         leafletOutput("map", width="100%", height=700),
                         
                         absolutePanel(id = "choices", class = "panel panel-default",
                                       top = 160, left = 40, width = 240, fixed=FALSE,
                                       draggable = TRUE, height = 470,
-                                      tags$h1("Choose the Parks",
-                                              align = "left", style = "font-size:27px"),
-                                      
-                                      selectInput("time", "Covid-19 Peak vs Present", choices=c("Covid-19 Peak","Present"),width = 230,selected = "Covid-19 Peak"),
-                                      radioButtons("radio","",choices = c("Select All","Clear Map")),
-                                      actionButton("ath", "Athletic Facilities",icon=icon("bicycle", lib = "font-awesome"),style='padding:8px; font-size:80%'),
-                                      br(),
-                                      actionButton("playgrounds", label = "Playgrounds", value = FALSE,icon=icon("running", lib = "font-awesome"),style='padding:8px; font-size:80%'),
-                                      br(),
-                                      actionButton("adult", label = "Adult Exercise Equipment", icon=icon("dumbbell", lib = "font-awesome"),style='padding:8px; font-size:80%'),
-                                      br(),
-                                      actionButton("dogruns", label = "Dog Runs", icon("dog", lib = "font-awesome"),style='padding:8px; font-size:80%'),
-                                      br(),
-                                      actionButton("comfort", label = "Comfort Stations", icon=icon("steam", lib = "font-awesome"),style='padding:8px; font-size:80%'),
-                                      br(),
-                                      actionButton("skate", "Skate Parks",icon=icon("skating", lib = "font-awesome"),style='padding:8px; font-size:80%'),
-                                      style = "opacity: 0.85"))
+                                      tags$h1("Where Do You Want To Eat?",
+                                              align = "left", style = "font-size:20px"),
+                                      numericInput(
+                                        "zip",
+                                        "Zip Code",
+                                        value = 10027,
+                                        min = 10001,
+                                        max = 10229)
+                                      )
     )
   )
+)
 )
