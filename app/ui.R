@@ -1,5 +1,17 @@
 #========================================================================================================================================================================================
 #Package
+
+packages.used=c("shiny","dplyr","tidyverse","leaflet","shinythemes","shinyWidgets")
+# Check for packages that need to be installed.
+packages.needed=setdiff(packages.used, 
+                        intersect(installed.packages()[,1], 
+                                  packages.used))
+# install additional packages
+if(length(packages.needed)>0){
+  install.packages(packages.needed, dependencies = TRUE)
+}
+
+
 library(shiny)
 library(dplyr)
 library(tidyverse)
@@ -54,7 +66,14 @@ shinyUI(
                                       tags$h1("Event View (Only Present)",align = "left", style = "font-size:15px"),
                                       #Event Action Button
                                       actionButton("event", label = "Event", icon=icon("child", lib = "font-awesome"),width = 230,style='padding:8px; font-size:80%'),
-                                      style = "opacity: 0.85"))
+                                      style = "opacity: 0.85")),
+               tabPanel('Restaurants and Covid Risk',
+                        titlePanel("Restaurants"),
+                        p("Each circle on the map is a restaurant, colored by the COVID risk of the neighborhood it's in. The COVID risk is calculated on the basis of COVID Test Positivity Rate over the past 7 days (updated weekly)."),
+                        p("Covid Test Positivity Rate is defined as the number of positive COVID tests out of 100 COVID tests performed in the zip code."),
+                        p("Zoom in for finer detail. Click on a restaurant for more information."),
+                        leafletOutput("restaurant_map", width="100%", height=700)
+               )
     )
   )
 )
