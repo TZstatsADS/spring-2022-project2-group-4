@@ -84,7 +84,7 @@ restaurant$risk <- factor(restaurant$risk, levels = c("Very Low", "Low", "Modera
 # 
 # restaurant <- restaurant %>% drop_na(latitude)
 # set.seed(1)
-# ratings <- sample(x = c(1,1.5,2,2.5,3,3.5,4,4.5,5), prob = c(0.05,0.05,0.1,0.1,0.1,0.1,0.1,0.15,0.25), size = nrow(restaurant),replace=T)
+# ratings <- sample(x = c(1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0), prob = c(0.05,0.05,0.1,0.1,0.1,0.1,0.1,0.15,0.25), size = nrow(restaurant),replace=T)
 # restaurant$rating <- ratings
 # write.csv(restaurant,"../data/restaurant.csv", row.names = FALSE)
 
@@ -94,7 +94,7 @@ shinyServer(function(input, output) {
   output$map <- renderLeaflet({
     leaflet() %>%
       addTiles() %>%
-      addProviderTiles("CartoDB.Voyager") %>%  
+      addProviderTiles("CartoDB.Positron") %>%  
       setView(lng = -73.961035, lat = 40.744436, zoom = 13)
   })
   palette <- c("chartreuse4", "palegreen", "lightpink1", "indianred4")
@@ -102,12 +102,12 @@ shinyServer(function(input, output) {
   
   leafletProxy("map", data = restaurant)%>%
     clearShapes() %>%
-    addProviderTiles("CartoDB.Voyager") %>%
+    addProviderTiles("CartoDB.Positron") %>%
     addCircleMarkers(~longitude, ~latitude, radius=6,
                      stroke=F,
                      color = ~color(risk),
                      popup = paste(sep="<br/>",paste("<b>",restaurant$dba,"</b>"), 
-                                   paste("Rating: ", restaurant$rating),
+                                   paste(sep="","Rating: ", restaurant$rating, "/5"),
                                    paste("Cuisine: ", restaurant$cuisine_description),
                                    " ",
                                    paste("Address: "),
