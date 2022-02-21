@@ -32,7 +32,7 @@ shinyUI(
 
                
                tabPanel('Restaurants by Covid Area', icon = icon("viruses"),
-                        titlePanel("Restaurant Location and Neighborhood Covid Positivity Rate"),
+                        titlePanel("Restaurants"),
                         
                          leafletOutput("map", width="100%", height=700)
     )

@@ -29,7 +29,7 @@ restaurant$risk <- factor(restaurant$risk, levels = c("Very Low", "Low", "Modera
 #   email     = "vvv2108@columbia.edu",
 #   password  = "dymheh-1dozdo-jinGin"
 # )
-# restaurant <- restaurant[,c("dba","boro","latitude","longitude","zipcode","cuisine_description")]
+# restaurant <- restaurant[,c("dba","boro","latitude","longitude","building","street","phone", "zipcode","cuisine_description")]
 # restaurant <- unique(restaurant)
 # 
 # covid <- read.csv(url("https://raw.githubusercontent.com/nychealth/coronavirus-data/master/latest/last7days-by-modzcta.csv"),
@@ -54,6 +54,21 @@ restaurant$risk <- factor(restaurant$risk, levels = c("Very Low", "Low", "Modera
 # restaurant$risk <- unlist(map(restaurant$percentpositivity_7day, risk))
 # restaurant$risk <- factor(restaurant$risk, levels = c("Very Low", "Low", "Moderate", "High"), ordered = T)
 # 
+# remove_blanks <- function(column){
+#   if (column == ""){
+#     return("Not Available")
+#   }
+#   else{
+#     return(column)
+#   }
+# }
+# 
+# restaurant$cuisine_description <- unlist(map(restaurant$cuisine_description, remove_blanks))
+# restaurant$dba <- unlist(map(restaurant$dba, remove_blanks))
+# restaurant$boro <- unlist(map(restaurant$boro, remove_blanks))
+# restaurant$street <- unlist(map(restaurant$street, remove_blanks))
+# restaurant$phone <- unlist(map(restaurant$phone, remove_blanks))
+# 
 # write.csv(restaurant,"../data/restaurant.csv", row.names = FALSE)
 
 #========================================================================================================================================================================================
@@ -67,12 +82,30 @@ shinyServer(function(input, output) {
   })
   palette <- c("chartreuse4", "palegreen", "lightpink1", "indianred4")
   color <- colorFactor(palette =palette, restaurant$risk)
+  content <- paste(sep = "<br/>",
+                   "<b><a href='http://www.samurainoodle.com'>Samurai Noodle</a></b>",
+                   "606 5th Ave. S",
+                   "Seattle, WA 98138"
+  )
   leafletProxy("map", data = restaurant)%>%
     clearShapes() %>%
     addProviderTiles("CartoDB.Voyager") %>%
-    addCircleMarkers(~longitude, ~latitude, radius=2,
+    addCircleMarkers(~longitude, ~latitude, radius=6,
+                     stroke=F,
                      color = ~color(risk),
-                     label = paste(restaurant$dba, "-", restaurant$zipcode)) %>% 
+                     popup = paste(sep="<br/>",paste("<b>",restaurant$dba,"</b>"), 
+                                   paste("Cuisine: ", restaurant$cuisine_description),
+                                   " ",
+                                   paste("Address: "),
+                                   paste(sep = " ", restaurant$building,restaurant$street),
+                                   restaurant$modzcta_name,
+                                   restaurant$boro,
+                                   paste("NY ",restaurant$zipcode),
+                                   " ",
+                                   paste("Phone: ", restaurant$phone),
+                                   " ",
+                                   paste("Covid Positivity Rate: ", restaurant$percentpositivity_7day, ", ", restaurant$risk)
+                                   )) %>% 
     addLegend("bottomright",
               pal = color,
               values = restaurant$risk,

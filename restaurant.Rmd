@@ -42,5 +42,7 @@ risk <- function(percentpositivity_7day){
 restaurant <- map(restaurant$percentpositivity_7day, risk)
 
 table(unlist(map(restaurant$percentpositivity_7day, risk)))
+
+unlist(map(restaurant$cuisine_description, remove_blanks))
 ```
 
