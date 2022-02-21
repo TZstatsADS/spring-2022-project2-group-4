@@ -82,6 +82,7 @@ restaurant$risk <- factor(restaurant$risk, levels = c("Very Low", "Low", "Modera
 # restaurant$street <- unlist(map(restaurant$street, remove_blanks))
 # restaurant$phone <- unlist(map(restaurant$phone, remove_blanks))
 # 
+# restaurant <- restaurant %>% drop_na(latitude)
 # write.csv(restaurant,"../data/restaurant.csv", row.names = FALSE)
 
 #========================================================================================================================================================================================
@@ -113,7 +114,7 @@ shinyServer(function(input, output) {
                                    " ",
                                    paste("Phone: ", restaurant$phone),
                                    " ",
-                                   paste("Covid Positivity Rate: ", restaurant$percentpositivity_7day, ", ", restaurant$risk)
+                                   paste(sep="","Covid Positivity Rate: ", restaurant$percentpositivity_7day, ", ", restaurant$risk)
                                    )) %>% 
     addLegend("bottomright",
               pal = color,
