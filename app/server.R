@@ -91,7 +91,7 @@ restaurant$risk <- factor(restaurant$risk, levels = c("Very Low", "Low", "Modera
 #========================================================================================================================================================================================
 
 shinyServer(function(input, output) {
-  output$map <- renderLeaflet({
+  output$restaurant_map <- renderLeaflet({
     leaflet() %>%
       addTiles() %>%
       addProviderTiles("CartoDB.Positron") %>%  
@@ -100,7 +100,7 @@ shinyServer(function(input, output) {
   palette <- c("chartreuse4", "palegreen", "lightpink1", "indianred4")
   color <- colorFactor(palette =palette, restaurant$risk)
   
-  leafletProxy("map", data = restaurant)%>%
+  leafletProxy("restaurant_map", data = restaurant)%>%
     clearShapes() %>%
     addProviderTiles("CartoDB.Positron") %>%
     addCircleMarkers(~longitude, ~latitude, radius=6,
