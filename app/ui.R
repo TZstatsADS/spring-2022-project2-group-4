@@ -31,7 +31,7 @@ shinyUI(
                ),
 
                
-               tabPanel('Restaurants by Covid Area', icon = icon("viruses"),
+               tabPanel('Restaurants and Covid Risk', icon = icon("viruses"),
                         titlePanel("Restaurants"),
                         
                          leafletOutput("map", width="100%", height=700)
