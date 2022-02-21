@@ -83,6 +83,9 @@ restaurant$risk <- factor(restaurant$risk, levels = c("Very Low", "Low", "Modera
 # restaurant$phone <- unlist(map(restaurant$phone, remove_blanks))
 # 
 # restaurant <- restaurant %>% drop_na(latitude)
+# set.seed(1)
+# ratings <- sample(x = c(1,1.5,2,2.5,3,3.5,4,4.5,5), prob = c(0.05,0.05,0.1,0.1,0.1,0.1,0.1,0.15,0.25), size = nrow(restaurant),replace=T)
+# restaurant$rating <- ratings
 # write.csv(restaurant,"../data/restaurant.csv", row.names = FALSE)
 
 #========================================================================================================================================================================================
@@ -104,6 +107,7 @@ shinyServer(function(input, output) {
                      stroke=F,
                      color = ~color(risk),
                      popup = paste(sep="<br/>",paste("<b>",restaurant$dba,"</b>"), 
+                                   paste("Rating: ", restaurant$rating),
                                    paste("Cuisine: ", restaurant$cuisine_description),
                                    " ",
                                    paste("Address: "),

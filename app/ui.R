@@ -41,6 +41,7 @@ shinyUI(
                tabPanel('Restaurants and Covid Risk',
                         titlePanel("Restaurants"),
                         p("Each circle on the map is a restaurant, colored by the COVID risk of the neighborhood it's in. The COVID risk is calculated on the basis of COVID Test Positivity Rate over the past 7 days (updated weekly)."),
+                        p("Covid Test Positivity Rate is defined as the number of positive COVID tests out of 100 COVID tests performed in the zip code."),
                         p("Zoom in for finer detail. Click on a restaurant for more information."),
                         leafletOutput("map", width="100%", height=700)
                         )
