@@ -103,7 +103,7 @@ shinyServer(function(input, output) {
   leafletProxy("restaurant_map", data = restaurant)%>%
     clearShapes() %>%
     addProviderTiles("CartoDB.Positron") %>%
-    addCircleMarkers(~longitude, ~latitude, radius=6,
+    addCircleMarkers(~longitude, ~latitude, data = restaurant, radius=6,
                      stroke=F,
                      color = ~color(risk),
                      popup = paste(sep="<br/>",paste("<b>",restaurant$dba,"</b>"), 
