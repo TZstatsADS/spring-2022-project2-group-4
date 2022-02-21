@@ -18,6 +18,15 @@ library(tidyverse)
 library(leaflet)
 library(shinythemes)
 library(shinyWidgets)
+library(ggplot2)
+library(lubridate)
+library(plotly)
+library(hrbrthemes)
+library(highcharter)
+library(RColorBrewer)
+if(!require(fontawesome)) devtools::install_github("rstudio/fontawesome")
+library(geojsonio)
+
 #========================================================================================================================================================================================
 #Park Tab
 shinyUI(
@@ -73,6 +82,47 @@ shinyUI(
                         p("Covid Test Positivity Rate is defined as the number of positive COVID tests out of 100 COVID tests performed in the zip code."),
                         p("Zoom in for finer detail. Click on a restaurant for more information."),
                         leafletOutput("restaurant_map", width="100%", height=700)
+               ),
+               
+               tabPanel("Symptoms Frequency Map",
+                        div(class="outer map",
+                            leafletOutput("map_sd", width="100%", height=550),
+                            absolutePanel(id = "symptoms", class = "panel panel-default",
+                                          top = 100, left = 25, width = 250, fixed=FALSE,
+                                          draggable = TRUE, height = "auto",
+                                          tags$h1("Please Select",
+                                                  align = "left", style = "font-size:30px"),
+                                          selectInput("Month",
+                                                      label = "Month",
+                                                      choices = c('2020-06', '2020-07', '2020-08', '2020-09', '2020-10', '2020-11', '2020-12', 
+                                                                  '2021-01', '2021-02', '2021-03', '2021-04', '2021-05', '2021-06', '2021-07', '2021-08', '2021-09', '2021-10', '2021-11', '2021-12', 
+                                                                  '2022-01')
+                                          ),
+                                          tags$h2("County",
+                                                  align = "left",style = "font-size:15px"),
+                                          checkboxInput("New_York_County",
+                                                        label = "New York County", value = FALSE),
+                                          checkboxInput("Richmond_County",
+                                                        label = "Richmond County", value = FALSE),
+                                          checkboxInput("Bronx_County",
+                                                        label = "Bronx County", value = FALSE),
+                                          checkboxInput("Queens_County",
+                                                        label = "Queens County", value = FALSE),
+                                          checkboxInput("Kings_County",
+                                                        label = "Kings County", value = FALSE),
+                                          style = "opacity: 0.80")
+                        ),
+                        sidebarPanel(top = 555, left = 25, width = 150, fixed=FALSE,
+                                     draggable = TRUE, height = 100,
+                                     selectInput("borough",
+                                                 label = "PLease Select The County To See The Covid Symptoms Trend :",
+                                                 choices = c('New York County', 'Richmond County', 'Bronx County', 'Queens County', 'Kings County')
+                                     )
+                        ),
+                        mainPanel( left = 25, width = 150, fixed=FALSE,
+                                   draggable = TRUE, height = 150,
+                                   plotOutput(outputId = "t3Plot1"),
+                        )
                )
     )
   )

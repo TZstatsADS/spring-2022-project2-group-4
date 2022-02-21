@@ -1,7 +1,7 @@
 #========================================================================================================================================================================================
 #Package
 
-packages.used=c("shiny","dplyr","tidyverse","purrr","RSocrata")
+packages.used=c("shiny","dplyr","tidyverse","purrr","RSocrata","zipcodeR")
 # Check for packages that need to be installed.
 packages.needed=setdiff(packages.used, 
                         intersect(installed.packages()[,1], 
@@ -14,9 +14,16 @@ if(length(packages.needed)>0){
 
 library(shiny)
 library(dplyr)
+library(ggplot2)
+library(lubridate)
 library(tidyverse)
 library(RSocrata)
 library(purrr)
+library(plotly)
+library(hrbrthemes)
+library(highcharter)
+library(RColorBrewer)
+library(zipcodeR)
 
 #========================================================================================================================================================================================
 # Data Loading
@@ -34,6 +41,34 @@ ath_faci <- ath_faci[ath_faci$status!='',]
 comfort <- read.csv(url("https://data.cityofnewyork.us/resource/i5n2-q8ck.csv"), 
                     as.is = TRUE)
 event <- read.csv("../data/NYC_Permitted_Event_Information.csv",as.is = TRUE)
+
+
+#========================================================================================================================================================================================
+
+zipcodeData <- search_state('NY')
+df_sd <- read.csv(url("https://data.cityofnewyork.us/resource/2nwg-uqyg.csv"), 
+                  as.is = TRUE)
+
+# Merging data to fetch the lat and log details
+df_sd <- na.omit(df_sd) 
+df_sd$zipcode <- df_sd$mod_zcta
+symptoms_data <- merge(zipcodeData,df_sd)
+
+symptoms_data$date <- as.Date(symptoms_data$date)
+
+frequency_plot_data_all <- symptoms_data %>%
+  mutate(month_year = format(date, "%Y-%m-25")) %>%
+  group_by(county,month_year) %>%
+  summarise(case = sum(total_ed_visits))
+
+selectComplaint <- function(month, county){
+  symptoms_data[(substr(symptoms_data$date, 1, 7) == month  & symptoms_data$county == county), ]
+}
+
+#========================================================================================================================================================================================
+
+
+
 
 # Extract Longitude & Latitude
 latlong <- function(x){
@@ -209,6 +244,18 @@ restaurant$risk <- factor(restaurant$risk, levels = c("Very Low", "Low", "Modera
 
 #Park Tab
 shinyServer(function(input, output) {
+  
+    # NYC symptoms map
+    output$map_sd <- renderLeaflet({
+      leaflet(options = leafletOptions(zoomControl = FALSE)) %>%
+        htmlwidgets::onRender(
+          "function(el, x) {
+                      L.control.zoom({ position: 'bottomright' }).addTo(this)
+                  }"
+        ) %>%
+        addProviderTiles("CartoDB.Voyager") %>%
+        setView(lng = -73.935242, lat = 40.730610, zoom = 10)
+    })
     
     #Map
     output$map <- renderLeaflet({
@@ -573,5 +620,124 @@ shinyServer(function(input, output) {
                   title = "Covid Positive Rate",
                   opacity = 0.85)
     })
+    
+    #========================================================================================================================================================================================
+    
+    
+    df_react_ny <- reactive({
+      selectComplaint(input$Month, "New York County")
+    })
+    
+    df_react_r <- reactive({
+      selectComplaint(input$Month, "Richmond County")
+    })
+    
+    df_react_q <- reactive({
+      selectComplaint(input$Month, "Queens County")
+    })
+    
+    df_react_b <- reactive({
+      selectComplaint(input$Month, "Bronx County")
+    })
+    
+    df_react_k <- reactive({
+      selectComplaint(input$Month, "Kings County")
+    })
+    
+    observeEvent((input$Month != '' & (input$New_York_County  | input$Richmond_County | input$Queens_County | input$Bronx_County  | input$Kings_County )),{
+      leafletProxy("map_sd", data = symptoms_data) %>%
+        clearShapes() %>%
+        clearMarkers() %>%
+        addProviderTiles("CartoDB.Voyager") %>%
+        fitBounds(-74.354598, 40.919500, -73.761545, 40.520024) 
+      
+      if (input$Month != '') {
+        if (input$New_York_County){
+          leafletProxy("map_sd", data = df_react_ny()) %>%
+            addCircleMarkers(
+              lng=~lng,
+              lat=~lat,
+              color = 'red',
+              weight = ~sum(total_ed_visits),
+              radius = ~sqrt(total_ed_visits) * 1.4,
+              stroke = FALSE,
+              fillOpacity = 0.3,
+              label = ~total_ed_visits
+            )
+        }
+        if (input$Richmond_County){
+          leafletProxy("map_sd", data = df_react_r()) %>%
+            addCircleMarkers(
+              lng=~lng,
+              lat=~lat,
+              color = 'red',
+              weight = ~sum(total_ed_visits),
+              radius = ~sqrt(total_ed_visits) * 1.4,
+              stroke = FALSE,
+              fillOpacity = 0.3,
+              label = ~total_ed_visits
+            )
+        }
+        if (input$Queens_County){
+          leafletProxy("map_sd", data = df_react_q()) %>%
+            addCircleMarkers(
+              lng=~lng,
+              lat=~lat,
+              color = 'red',
+              weight = ~sum(total_ed_visits),
+              radius = ~sqrt(total_ed_visits) * 1.4,
+              stroke = FALSE,
+              fillOpacity = 0.3,
+              label = ~total_ed_visits
+            )
+        }
+        if (input$Bronx_County){
+          leafletProxy("map_sd", data = df_react_b()) %>%
+            addCircleMarkers(
+              lng=~lng,
+              lat=~lat,
+              color = 'red',
+              weight = ~sum(total_ed_visits),
+              radius = ~sqrt(total_ed_visits) * 1.4,
+              stroke = FALSE,
+              fillOpacity = 0.3,
+              label = ~total_ed_visits
+            )
+        }
+        if (input$Kings_County){
+          leafletProxy("map_sd", data = df_react_k()) %>%
+            addCircleMarkers(
+              lng=~lng,
+              lat=~lat,
+              color = 'red',
+              weight = ~sum(total_ed_visits),
+              radius = ~sqrt(total_ed_visits) * 1.4,
+              stroke = FALSE,
+              fillOpacity = 0.3,
+              label = ~total_ed_visits
+            )
+        }
+      }
+    })
+    
+    output$t3Plot1 <- renderPlot({
+      # Kernel regression to get a smooth trend
+      frequency_plot_data <- frequency_plot_data_all[frequency_plot_data_all$county == input$borough,]
+      frequency_plot_data <- frequency_plot_data[rev(order(frequency_plot_data$month_year)),]
+      dd <- frequency_plot_data[1:12,]
+      dd$month_year <- as.Date(dd$month_year)
+      ggplot(dd,  aes(x=month_year, y=case), label=case) +
+        geom_area(fill="#69b3a2", alpha=0.5) +
+        geom_line(color="#69b3a2") +
+        geom_point() +
+        geom_text(aes(label=case),hjust=0,vjust=0) +
+        ggtitle("Number of Symptomatic Patient Hospital Visits") +
+        ylab("Symptom frequency") +
+        xlab("Date") +
+        theme_ipsum()
+    })
+    
+    #========================================================================================================================================================================================
+    
 })
 
