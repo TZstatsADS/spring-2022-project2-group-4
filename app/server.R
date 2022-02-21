@@ -1,3 +1,16 @@
+packages.used=c("shiny","dplyr","tidyverse","DT","ggplot2",
+                "lubridate","plotly","hrbrthemes","highcharter",
+                "RColorBrewer","geojsonio","readr","leaflet",
+                "RSocrata","purrr")
+# Check for packages that need to be installed.
+packages.needed=setdiff(packages.used, 
+                        intersect(installed.packages()[,1], 
+                                  packages.used))
+# install additional packages
+if(length(packages.needed)>0){
+  install.packages(packages.needed, dependencies = TRUE)
+}
+
 
 library(shiny)
 library(dplyr)
@@ -78,15 +91,11 @@ shinyServer(function(input, output) {
     leaflet() %>%
       addTiles() %>%
       addProviderTiles("CartoDB.Voyager") %>%  
-      setView(lng = -73.961035, lat = 40.744436, zoom = 12)
+      setView(lng = -73.961035, lat = 40.744436, zoom = 13)
   })
   palette <- c("chartreuse4", "palegreen", "lightpink1", "indianred4")
   color <- colorFactor(palette =palette, restaurant$risk)
-  content <- paste(sep = "<br/>",
-                   "<b><a href='http://www.samurainoodle.com'>Samurai Noodle</a></b>",
-                   "606 5th Ave. S",
-                   "Seattle, WA 98138"
-  )
+  
   leafletProxy("map", data = restaurant)%>%
     clearShapes() %>%
     addProviderTiles("CartoDB.Voyager") %>%

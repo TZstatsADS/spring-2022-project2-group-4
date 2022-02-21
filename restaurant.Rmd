@@ -1,0 +1,48 @@
+---
+title: "restaurant"
+output: html_document
+---
+
+https://raw.githubusercontent.com/nychealth/coronavirus-data/master/latest/last7days-by-modzcta.csv
+```{r}
+library(purrr)
+restaurant <-read.csv(url("https://raw.githubusercontent.com/nychealth/coronavirus-data/master/latest/last7days-by-modzcta.csv"), 
+                        as.is = TRUE)
+
+## install.packages("RSocrata")
+
+library("RSocrata")
+
+df <- read.socrata(
+  "https://data.cityofnewyork.us/resource/43nn-pn8j.csv",
+  app_token = "g19Oad6Fq1r0KCmwHc0B14riH",
+  email     = "vvv2108@columbia.edu",
+  password  = "dymheh-1dozdo-jinGin"
+)
+df <- df[,c("dba","boro","latitude","longitude","zipcode","cuisine_description")]
+df <- unique(df)
+
+summary(covid$percentpositivity_7day)
+hist(covid$percentpositivity_7day, col = "darkred")
+
+risk <- function(percentpositivity_7day){
+  if (percentpositivity_7day <= 1){
+    return("Very Low")
+  }
+  else if (percentpositivity_7day > 1 & percentpositivity_7day <= 3){
+    return("Low")
+  }
+  else if (percentpositivity_7day > 3 & percentpositivity_7day <= 5){
+    return("Moderate")
+  }
+  else{
+    return("High")
+  }
+}
+restaurant <- map(restaurant$percentpositivity_7day, risk)
+
+table(unlist(map(restaurant$percentpositivity_7day, risk)))
+
+unlist(map(restaurant$cuisine_description, remove_blanks))
+```
+
