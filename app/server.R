@@ -140,7 +140,7 @@ event <- merge(event, all, by = "propname")%>%
 playgrounds <- playgrounds %>%
     mutate(popup = paste(sep = "<br/>",
                          paste0(location),
-                         paste0("<b>Accessibility: </b>", playgrounds$accessibilityLevel)
+                         paste0("<b>Accessibility: </b>", playgrounds$accessibilitylevel)
     ))
 
 ath_faci <- ath_faci %>%
@@ -243,6 +243,7 @@ restaurant$risk <- factor(restaurant$risk, levels = c("Very Low", "Low", "Modera
 #========================================================================================================================================================================================
 
 #Park Tab
+
 shinyServer(function(input, output) {
   
     # NYC symptoms map
@@ -254,7 +255,7 @@ shinyServer(function(input, output) {
                   }"
         ) %>%
         addProviderTiles("CartoDB.Positron") %>%
-        setView(lng = -73.935242, lat = 40.730610, zoom = 10)
+        setView(lng = -73.935242, lat = 40.730610, zoom = 11)
     })
     
     #Map
@@ -274,9 +275,9 @@ shinyServer(function(input, output) {
             palette_dog = c("black","blue", "yellow")
             color <- colorFactor(palette =palette_dog, dog_runs$status)
             #Add Markers
-            quakeIcons <- iconList(black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight =40))
+            quakeIcons <- iconList(black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30))
             
             htmlIcons <- paste("<img src='https://img1.pnghut.com/5/22/2/YqsXc9MqJD/map-google-maps-pin-vector-beauty-plus-salon-maker.jpg' style='width:30px;height:30px;'>",unique(dog_runs$status)[1],"<br>
             <img src='https://www.clipartmax.com/png/middle/95-954602_google-maps-marker-blue.png' style='width:30px;height:30px;'>",unique(dog_runs$status)[2],"<br>
@@ -292,7 +293,7 @@ shinyServer(function(input, output) {
               clearMarkers() %>%
               clearControls()%>%
               addProviderTiles("CartoDB.Positron") %>%
-              setView(lng = -73.935242, lat = 40.730610, zoom = 10)
+              setView(lng = -73.935242, lat = 40.730610, zoom = 11)
             
             leafletProxy("map", data = dog_runs)%>%
               clearShapes() %>%
@@ -301,8 +302,10 @@ shinyServer(function(input, output) {
               addProviderTiles("CartoDB.Positron") %>%    
               addMarkers(~longitude, ~latitude,
                          icon = quakeIcons[dog_runs$group],
-                         label = paste(dog_runs$propertyname, '-', dog_runs$name))%>%
-              addControl(html = htmlIcons,position="bottomright")
+                         label = paste(dog_runs$propertyname, '-', dog_runs$name),
+                         popup = ~popup,
+                         options = markerOptions(opacity = 0.6))%>%
+              addControl(html = htmlIcons,position = "bottomleft")
             
         }
         #For Covid-19 Peak Map
@@ -311,8 +314,8 @@ shinyServer(function(input, output) {
             palette_dog = c("black","yellow")
             color <- colorFactor(palette =palette_dog, dog_runs$peak_status)
             #Add Markers
-            quakeIcons <- iconList(black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight =40))
+            quakeIcons <- iconList(black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30))
             
             htmlIcons <- paste("<img src='https://icon-library.com/images/geo-location-icon/geo-location-icon-21.jpg' style='width:30px;height:30px;'>",unique(dog_runs$peak_status)[1],"<br>
             <img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png' style='width:30px;height:30px;'>",unique(dog_runs$peak_status)[2])
@@ -325,7 +328,7 @@ shinyServer(function(input, output) {
               clearMarkers() %>%
               clearControls()%>%
               addProviderTiles("CartoDB.Positron") %>%
-              setView(lng = -73.935242, lat = 40.730610, zoom = 10)
+              setView(lng = -73.935242, lat = 40.730610, zoom = 11)
             
             leafletProxy("map", data = dog_runs)%>%
               clearShapes() %>%
@@ -334,8 +337,10 @@ shinyServer(function(input, output) {
               addProviderTiles("CartoDB.Positron") %>%    
               addMarkers(~longitude, ~latitude,
                          icon = quakeIcons[dog_runs$group],
-                         label = paste(dog_runs$propertyname, '-', dog_runs$name))%>%
-              addControl(html = htmlIcons,position="bottomright")
+                         label = paste(dog_runs$propertyname, '-', dog_runs$name),
+                         popup = ~popup,
+                         options = markerOptions(opacity = 0.6))%>%
+              addControl(html = htmlIcons,position = "bottomleft")
             
         }
     })
@@ -348,10 +353,10 @@ shinyServer(function(input, output) {
             palette <-  c("green","black","blue", "yellow")
             color <- colorFactor(palette =palette, ath_faci$status)
             #Add Markers
-            quakeIcons <- iconList(green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight =40)
+            quakeIcons <- iconList(green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
             
             htmlIcons <- paste("<img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(ath_faci$status)[1],"<br>
@@ -371,7 +376,7 @@ shinyServer(function(input, output) {
               clearMarkers() %>%
               clearControls()%>%
               addProviderTiles("CartoDB.Positron") %>%
-              setView(lng = -73.935242, lat = 40.730610, zoom = 10)
+              setView(lng = -73.935242, lat = 40.730610, zoom = 11)
             
             leafletProxy("map", data = ath_faci)%>%
               clearShapes() %>%
@@ -380,8 +385,10 @@ shinyServer(function(input, output) {
               addProviderTiles("CartoDB.Positron") %>%    
               addMarkers(~longitude, ~latitude,
                          icon = quakeIcons[ath_faci$group],
-                         label = paste(ath_faci$propertyname,",",ath_faci$primarysport))%>%
-              addControl(html = htmlIcons,position="bottomright")  
+                         label = paste(ath_faci$propname,",",ath_faci$primarysport),
+                         popup = ~popup,
+                         options = markerOptions(opacity = 0.6))%>%
+              addControl(html = htmlIcons,position = "bottomleft")  
             
         }
         #For Covid-19 Peak Map
@@ -390,10 +397,10 @@ shinyServer(function(input, output) {
             palette <-  c("green","black","blue", "yellow")
             color <- colorFactor(palette =palette, ath_faci$peak_status)
             #Add Markers
-            quakeIcons <- iconList(green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight =40)
+            quakeIcons <- iconList(green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
             htmlIcons <- paste("<img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(ath_faci$peak_status)[1],"<br>
             <img src='https://icon-library.com/images/geo-location-icon/geo-location-icon-21.jpg' style='width:30px;height:30px;'>",unique(ath_faci$peak_status)[2],"<br>
@@ -411,7 +418,7 @@ shinyServer(function(input, output) {
               clearMarkers() %>%
               clearControls()%>%
               addProviderTiles("CartoDB.Positron") %>%
-              setView(lng = -73.935242, lat = 40.730610, zoom = 10)
+              setView(lng = -73.935242, lat = 40.730610, zoom = 11)
             
             leafletProxy("map", data = ath_faci)%>%
               clearShapes() %>%
@@ -420,8 +427,10 @@ shinyServer(function(input, output) {
               addProviderTiles("CartoDB.Positron") %>%    
               addMarkers(~longitude, ~latitude,
                          icon = quakeIcons[ath_faci$group],
-                         label = paste(ath_faci$propertyname,",",ath_faci$primarysport))%>%
-              addControl(html = htmlIcons,position="bottomright")  
+                         label = paste(ath_faci$propname,",",ath_faci$primarysport),
+                         popup = ~popup,
+                         options = markerOptions(opacity = 0.6))%>%
+              addControl(html = htmlIcons,position = "bottomleft")  
         }
     })
     
@@ -433,10 +442,10 @@ shinyServer(function(input, output) {
             palette <-  c("green","black","blue", "yellow")
             color <- colorFactor(palette =palette, comfort$status)
             #Add Markers
-            quakeIcons <- iconList(green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight =40)
+            quakeIcons <- iconList(green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
             htmlIcons <- paste("<img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(comfort$status)[1],"<br>
             <img src='https://icon-library.com/images/geo-location-icon/geo-location-icon-21.jpg' style='width:30px;height:30px;'>",unique(comfort$status)[2],"<br>
@@ -454,7 +463,7 @@ shinyServer(function(input, output) {
               clearMarkers() %>%
               clearControls()%>%
               addProviderTiles("CartoDB.Positron") %>%
-              setView(lng = -73.935242, lat = 40.730610, zoom = 10)
+              setView(lng = -73.935242, lat = 40.730610, zoom = 11)
             
             leafletProxy("map", data = comfort)%>%
               clearShapes() %>%
@@ -463,8 +472,9 @@ shinyServer(function(input, output) {
               addProviderTiles("CartoDB.Positron") %>%    
               addMarkers(~longitude, ~latitude,
                          icon = quakeIcons[comfort$group],
-                         label = paste(comfort$longitude, '-', comfort$latitude))%>%
-              addControl(html = htmlIcons,position="bottomright") 
+                         label = paste(comfort$longitude, '-', comfort$latitude),
+                         options = markerOptions(opacity = 0.6))%>%
+              addControl(html = htmlIcons,position = "bottomleft") 
             
         }
         #For Covid-19 Peak Map
@@ -473,10 +483,10 @@ shinyServer(function(input, output) {
             palette <-  c("green","black","blue", "yellow")
             color <- colorFactor(palette =palette, comfort$peak_status)
             #Add Markers
-            quakeIcons <- iconList(green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight =40)
+            quakeIcons <- iconList(green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
             htmlIcons <- paste("<img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(comfort$peak_status)[1],"<br>
             <img src='https://icon-library.com/images/geo-location-icon/geo-location-icon-21.jpg' style='width:30px;height:30px;'>",unique(comfort$peak_status)[2],"<br>
@@ -494,7 +504,7 @@ shinyServer(function(input, output) {
               clearMarkers() %>%
               clearControls()%>%
               addProviderTiles("CartoDB.Positron") %>%
-              setView(lng = -73.935242, lat = 40.730610, zoom = 10)
+              setView(lng = -73.935242, lat = 40.730610, zoom = 11)
             
             leafletProxy("map", data = comfort)%>%
               clearShapes() %>%
@@ -503,8 +513,9 @@ shinyServer(function(input, output) {
               addProviderTiles("CartoDB.Positron") %>%    
               addMarkers(~longitude, ~latitude,
                          icon = quakeIcons[comfort$group],
-                         label = paste(comfort$longitude, '-', comfort$latitude))%>%
-              addControl(html = htmlIcons,position="bottomright") 
+                         label = paste(comfort$longitude, '-', comfort$latitude),
+                         options = markerOptions(opacity = 0.6))%>%
+              addControl(html = htmlIcons,position = "bottomleft") 
             
         }
     })
@@ -517,8 +528,8 @@ shinyServer(function(input, output) {
             palette <-  c("green", "yellow")
             color <- colorFactor(palette =palette, skate_parks$status)
             #Add Markers
-            quakeIcons <- iconList(green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight =40)
+            quakeIcons <- iconList(green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
             htmlIcons <- paste("<img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(skate_parks$status)[1],"<br>
             <img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png' style='width:30px;height:30px;'>",unique(skate_parks$status)[2])
@@ -533,7 +544,7 @@ shinyServer(function(input, output) {
               clearMarkers() %>%
               clearControls()%>%
               addProviderTiles("CartoDB.Positron") %>%
-              setView(lng = -73.935242, lat = 40.730610, zoom = 10)
+              setView(lng = -73.935242, lat = 40.730610, zoom = 11)
             
             leafletProxy("map", data = skate_parks)%>%
               clearShapes() %>%
@@ -542,8 +553,10 @@ shinyServer(function(input, output) {
               addProviderTiles("CartoDB.Positron") %>%    
               addMarkers(~longitude, ~latitude,
                          icon = quakeIcons[skate_parks$group],
-                         label = paste(skate_parks$propname))%>%
-              addControl(html = htmlIcons,position="bottomright")
+                         label = paste(skate_parks$propname),
+                         popup = ~popup,
+                         options = markerOptions(opacity = 0.6))%>%
+              addControl(html = htmlIcons,position = "bottomleft")
             
         }
         #For Covid-19 Peak Map
@@ -552,9 +565,9 @@ shinyServer(function(input, output) {
             palette <-  c("black","green", "yellow")
             color <- colorFactor(palette =palette, skate_parks$peak_status)
             #Add Markers
-            quakeIcons <- iconList(black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight =40)
+            quakeIcons <- iconList(black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
             htmlIcons <- paste("<img src='https://icon-library.com/images/geo-location-icon/geo-location-icon-21.jpg' style='width:30px;height:30px;'>",unique(skate_parks$peak_status)[1],"<br>
             <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png' style='width:30px;height:30px;'>",unique(skate_parks$peak_status)[2],"<br>
@@ -570,7 +583,7 @@ shinyServer(function(input, output) {
               clearMarkers() %>%
               clearControls()%>%
               addProviderTiles("CartoDB.Positron") %>%
-              setView(lng = -73.935242, lat = 40.730610, zoom = 10)
+              setView(lng = -73.935242, lat = 40.730610, zoom = 11)
             
             leafletProxy("map", data = skate_parks)%>%
               clearShapes() %>%
@@ -579,8 +592,10 @@ shinyServer(function(input, output) {
               addProviderTiles("CartoDB.Positron") %>%    
               addMarkers(~longitude, ~latitude,
                          icon = quakeIcons[skate_parks$group],
-                         label = paste(skate_parks$propname))%>%
-              addControl(html = htmlIcons,position="bottomright")
+                         label = paste(skate_parks$propname),
+                         popup = ~popup,
+                         options = markerOptions(opacity = 0.6))%>%
+              addControl(html = htmlIcons,position = "bottomleft")
         }
     })
     
@@ -592,10 +607,10 @@ shinyServer(function(input, output) {
             palette <-  c("green","black","blue", "yellow")
             color <- colorFactor(palette =palette, playgrounds$status)
             #Add Markers
-            quakeIcons <- iconList(green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight =40)
+            quakeIcons <- iconList(green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
             htmlIcons <- paste("<img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(playgrounds$status)[1],"<br>
             <img src='https://icon-library.com/images/geo-location-icon/geo-location-icon-21.jpg' style='width:30px;height:30px;'>",unique(playgrounds$status)[2],"<br>
@@ -613,7 +628,7 @@ shinyServer(function(input, output) {
               clearMarkers() %>%
               clearControls()%>%
               addProviderTiles("CartoDB.Positron") %>%
-              setView(lng = -73.935242, lat = 40.730610, zoom = 10)
+              setView(lng = -73.935242, lat = 40.730610, zoom = 11)
             
             leafletProxy("map", data = playgrounds)%>%
               clearShapes() %>%
@@ -622,8 +637,10 @@ shinyServer(function(input, output) {
               addProviderTiles("CartoDB.Positron") %>%    
               addMarkers(~longitude, ~latitude,
                          icon = quakeIcons[playgrounds$group],
-                         label = paste(playgrounds$propname))%>%
-              addControl(html = htmlIcons,position="bottomright")  
+                         label = paste(playgrounds$propname),
+                         popup = ~popup,
+                         options = markerOptions(opacity = 0.6))%>%
+              addControl(html = htmlIcons,position = "bottomleft")  
             
         }
         #For Covid-19 Peak Map
@@ -632,10 +649,10 @@ shinyServer(function(input, output) {
             palette <-  c("green","black","blue", "yellow")
             color <- colorFactor(palette =palette, playgrounds$peak_status)
             #Add Markers
-            quakeIcons <- iconList(green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight =40)
+            quakeIcons <- iconList(green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
             htmlIcons <- paste("<img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(playgrounds$peak_status)[1],"<br>
             <img src='https://icon-library.com/images/geo-location-icon/geo-location-icon-21.jpg' style='width:30px;height:30px;'>",unique(playgrounds$peak_status)[2],"<br>
@@ -653,7 +670,7 @@ shinyServer(function(input, output) {
               clearMarkers() %>%
               clearControls()%>%
               addProviderTiles("CartoDB.Positron") %>%
-              setView(lng = -73.935242, lat = 40.730610, zoom = 10)
+              setView(lng = -73.935242, lat = 40.730610, zoom = 11)
             
             leafletProxy("map", data = playgrounds)%>%
               clearShapes() %>%
@@ -662,8 +679,10 @@ shinyServer(function(input, output) {
               addProviderTiles("CartoDB.Positron") %>%    
               addMarkers(~longitude, ~latitude,
                          icon = quakeIcons[playgrounds$group],
-                         label = paste(playgrounds$propname))%>%
-              addControl(html = htmlIcons,position="bottomright")   
+                         label = paste(playgrounds$propname),
+                         popup = ~popup,
+                         options = markerOptions(opacity = 0.6))%>%
+              addControl(html = htmlIcons,position = "bottomleft")   
             
         }
     })
@@ -676,9 +695,9 @@ shinyServer(function(input, output) {
             palette <-  c("green","blue", "yellow")
             color <- colorFactor(palette =palette, adult_exe$status)
             #Add Markers
-            quakeIcons <- iconList(green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight =40)
+            quakeIcons <- iconList(green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
             htmlIcons <- paste("<img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(adult_exe$status)[1],"<br>
             <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png'
@@ -695,7 +714,7 @@ shinyServer(function(input, output) {
               clearMarkers() %>%
               clearControls()%>%
               addProviderTiles("CartoDB.Positron") %>%
-              setView(lng = -73.935242, lat = 40.730610, zoom = 10)
+              setView(lng = -73.935242, lat = 40.730610, zoom = 11)
             
             leafletProxy("map", data = adult_exe)%>%
               clearShapes() %>%
@@ -704,8 +723,10 @@ shinyServer(function(input, output) {
               addProviderTiles("CartoDB.Positron") %>%    
               addMarkers(~longitude, ~latitude,
                          icon = quakeIcons[adult_exe$group],
-                         label = paste(adult_exe$propname))%>%
-              addControl(html = htmlIcons,position="bottomright")  
+                         label = paste(adult_exe$propname),
+                         popup = ~popup,
+                         options = markerOptions(opacity = 0.6))%>%
+              addControl(html = htmlIcons,position = "bottomleft")  
         }
         #For Covid-19 Peak Map
         else{
@@ -713,10 +734,10 @@ shinyServer(function(input, output) {
             palette <-  c("green","black","blue", "yellow")
             color <- colorFactor(palette =palette, adult_exe$peak_status)
             #Add Markers
-            quakeIcons <- iconList(green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight =40)
+            quakeIcons <- iconList(green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   black = makeIcon("../doc/figs/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   blue = makeIcon("../doc/figs/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   yellow = makeIcon("../doc/figs/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
             htmlIcons <- paste("<img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(adult_exe$peak_status)[1],"<br>
             <img src='https://icon-library.com/images/geo-location-icon/geo-location-icon-21.jpg' style='width:30px;height:30px;'>",unique(adult_exe$peak_status)[2],"<br>
@@ -734,7 +755,7 @@ shinyServer(function(input, output) {
               clearMarkers() %>%
               clearControls()%>%
               addProviderTiles("CartoDB.Positron") %>%
-              setView(lng = -73.935242, lat = 40.730610, zoom = 10)
+              setView(lng = -73.935242, lat = 40.730610, zoom = 11)
             
             leafletProxy("map", data = adult_exe)%>%
               clearShapes() %>%
@@ -743,8 +764,10 @@ shinyServer(function(input, output) {
               addProviderTiles("CartoDB.Positron") %>%    
               addMarkers(~longitude, ~latitude,
                          icon = quakeIcons[adult_exe$group],
-                         label = paste(adult_exe$propname))%>%
-              addControl(html = htmlIcons,position="bottomright") 
+                         label = paste(adult_exe$propname),
+                         popup = ~popup,
+                         options = markerOptions(opacity = 0.6))%>%
+              addControl(html = htmlIcons,position = "bottomleft") 
             
         }
     })
@@ -757,9 +780,9 @@ shinyServer(function(input, output) {
             palette <-  c("pink","orange", "green")
             color <- colorFactor(palette =palette, event$Event.Type)
             #Add Markers
-            quakeIcons <- iconList(pink = makeIcon("../doc/figs/pink_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   orange = makeIcon("../doc/figs/orange_maps_icon.png", iconWidth = 30, iconHeight =40),
-                                   green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight =40)
+            quakeIcons <- iconList(pink = makeIcon("../doc/figs/pink_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   orange = makeIcon("../doc/figs/orange_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   green = makeIcon("../doc/figs/green_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
             
             htmlIcons <- paste("<img src='https://www.clipartmax.com/png/middle/176-1765537_location-mark-icons-map-pin-icon-pink.png' style='width:30px;height:30px;'>",unique(event$Event.Type)[1],"<br>
@@ -776,7 +799,7 @@ shinyServer(function(input, output) {
               clearControls()%>%
               clearMarkers() %>%
               addProviderTiles("CartoDB.Positron") %>%
-              setView(lng = -73.935242, lat = 40.730610, zoom = 10)
+              setView(lng = -73.935242, lat = 40.730610, zoom = 11)
             
             leafletProxy("map", data = event)%>%
               clearShapes() %>%
@@ -785,9 +808,10 @@ shinyServer(function(input, output) {
               addProviderTiles("CartoDB.Positron") %>%    
               addMarkers(~longitude, ~latitude,
                          icon = quakeIcons[event$group],
-                         label = paste(event$propname,",",event$Event.Name,popup = ~popup))%>%
+                         label = paste(event$propname,",",event$Event.Name,popup = ~popup),
+                         options = markerOptions(opacity = 0.6))%>%
               
-              addControl(html = htmlIcons,position="bottomright")  
+              addControl(html = htmlIcons,position = "bottomleft")  
         }
         #For Covid-19 Peak Map
         else{
