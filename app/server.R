@@ -27,18 +27,17 @@ library(zipcodeR)
 
 #========================================================================================================================================================================================
 # Data Loading
-skate_parks <- read.csv(url("https://data.cityofnewyork.us/resource/pvvr-75zk.csv"), 
-                        as.is = TRUE)
-dog_runs <- read.csv(url("https://data.cityofnewyork.us/resource/wswf-9pts.csv"), 
+skate_parks <- read.csv("../data/skate_parks.csv",as.is = TRUE)
+dog_runs <- read.csv("../data/dog_runs.csv", 
                      as.is = TRUE)
-playgrounds <- read.csv(url("https://data.cityofnewyork.us/resource/a4qt-mpr5.csv"), 
+playgrounds <- read.csv("../data/playgrounds.csv", 
                         as.is = TRUE)
-adult_exe <- read.csv(url("https://data.cityofnewyork.us/resource/tkzt-zfpz.csv"), 
+adult_exe <- read.csv("../data/adult_exe.csv", 
                       as.is = TRUE)
-ath_faci <- read.csv(url("https://data.cityofnewyork.us/resource/g3xg-qtbc.csv"), 
+ath_faci <- read.csv("../data/ath_fac.csv", 
                      as.is = TRUE)
 ath_faci <- ath_faci[ath_faci$status!='',]
-comfort <- read.csv(url("https://data.cityofnewyork.us/resource/i5n2-q8ck.csv"), 
+comfort <- read.csv("../data/comfort.csv", 
                     as.is = TRUE)
 event <- read.csv("../data/NYC_Permitted_Event_Information.csv",as.is = TRUE)
 
@@ -46,7 +45,7 @@ event <- read.csv("../data/NYC_Permitted_Event_Information.csv",as.is = TRUE)
 #========================================================================================================================================================================================
 
 zipcodeData <- search_state('NY')
-df_sd <- read.csv(url("https://data.cityofnewyork.us/resource/2nwg-uqyg.csv"), 
+df_sd <- read.csv("../data/df_cd.csv", 
                   as.is = TRUE)
 
 # Merging data to fetch the lat and log details

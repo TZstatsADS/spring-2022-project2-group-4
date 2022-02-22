@@ -32,12 +32,27 @@ library(geojsonio)
 shinyUI(
   fluidPage(
     #Navigation Page
-    navbarPage(theme = shinytheme("sandstone"), collapsible = TRUE,
+    navbarPage(theme = shinytheme("flatly"), collapsible = TRUE,
                title= "",
-               id="nav",
+               id="nav",inverse = TRUE,
                windowTitle = "",
                header = tagList(
                  useShinydashboard()
+               ),
+               tabPanel('Home Page',icon = icon("home"),
+                        h2(strong("Outing Avenues in NYC in times of Covid-19"),align = "center", style="font-family:Helvetica, font-color:Black"),
+                        h3("Chen Gexin,", "Khan Zaigham,", "Ma Xiangyu,", "Naik Vaishak,","Vedula Varchasvi",align = "center",style="color:gray", style="font-family:Helvetica, font-color:Black"),
+                        h4("2022 Spring Project2 Group4 - Applied Data Science at Columbia University",align = "center",style="color:gray", style="font-family:Helvetica, font-color:Black"),
+                        br(),
+                        h3("The impact of Covid-19 has been tremendous on the entire world. It has changed the lives of people. There have been a lot of behavioral and lifestyle changes in the pandemic.  
+                                 The city suffered greatly in the pandemic. Apart from the threat of life threatening infections, there were far reaching consequences of the pandemic. The businesses suffered tremendously in this pandemic. During the peak of the pandemic, most business avenues had closed. 
+                                 The city witnessed a decline in all outing options. Restaurant business had almost vanished. As the city gets up to a new normal, even now the impact of the virus is quite visible. Most businesses, however, have started to show growth and improvement. It is a sign of hope and improvement for all. ", style="color:black", align = "left", style="font-family:Helvetica, font-color:Black"),
+                        br(),
+                        h3("This app is primarily targeted at the residents of NYC who are looking for outing avenues. Through this app, we aim to suggest the places to visit in NYC by keeping in consideration the Covid outbreak. It also shows the impact of Covid outbreak in outing options and compares the present day options with peak of Covid-19. 
+                        The app suggests athletic facilities, playgrounds, adult exercise equipment, dog runs, comfort stations and skate parks. The app also displays the events happening in NYC. The app also shows the restaurants in NYC. Along with it, restuarant details and ratings are also shown to the user. Each circle on the map is a restaurant, colored by the COVID risk of the neighborhood it's in. The COVID risk is calculated on the basis of COVID Test Positivity Rate over the past 7 days (updated weekly).
+                         Effort has been made to also show clusters of covid near the restaurants and map them to different zones. The app shows a comparison between the peak of Covid-19 and the present day.
+                                    Finally, to make sure that users are a step ahead of the covid, the app not just tracks covid in different areas, but rather keeps a track of pneumonia like symptoms in different areas. Users can avoid those area as such areas could be a potential outbreak spot. 
+                                    It may continue as the economy recovers and life returns to a semblance of normality.", style="color:black",align = "Left", style="font-family:Helvetica, font-color:Black")
                ),
                #Park Page
                tabPanel('Park Reopen Situation', icon = icon("tree"),
@@ -77,14 +92,14 @@ shinyUI(
                                       actionButton("event", label = "Event", icon=icon("child", lib = "font-awesome"),width = 230,style='padding:8px; font-size:80%'),
                                       style = "opacity: 0.85")),
                tabPanel('Restaurants and Covid Risk',
+                        icon = icon("cutlery"),
                         titlePanel("Restaurants"),
-                        p("Each circle on the map is a restaurant, colored by the COVID risk of the neighborhood it's in. The COVID risk is calculated on the basis of COVID Test Positivity Rate over the past 7 days (updated weekly)."),
-                        p("Covid Test Positivity Rate is defined as the number of positive COVID tests out of 100 COVID tests performed in the zip code. Very Low: Rate <= 1%, Low: 1% < Rate <= 3%, Moderate: 3% < Rate <= 5%, High: Rate > 5%."),
-                        p("Zoom in for finer detail. Click on a restaurant for more information."),
+                        p("Covid Test Positivity Rate is defined as the number of positive COVID tests out of 100 COVID tests performed in the zip code. Very Low: Rate <= 1%, Low: 1% < Rate <= 3%, Moderate: 3% < Rate <= 5%, High: Rate > 5%.",style='padding:8px; font-size:80%'),
                         leafletOutput("restaurant_map", width="100%", height=700)
                ),
                
                tabPanel("Symptoms Frequency Map",
+                        icon=icon("heart"),
                         div(class="outer map",
                             leafletOutput("map_sd", width="100%", height=550),
                             absolutePanel(id = "symptoms", class = "panel panel-default",
