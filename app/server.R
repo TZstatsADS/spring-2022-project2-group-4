@@ -27,6 +27,20 @@ library(zipcodeR)
 library(shinydashboard)
 #========================================================================================================================================================================================
 # Data Loading
+#Use these for continuous real time data through api 
+# skate_parks <- read.csv(url("https://data.cityofnewyork.us/resource/pvvr-75zk.csv"), 
+#                         as.is = TRUE)
+# dog_runs <- read.csv(url("https://data.cityofnewyork.us/resource/wswf-9pts.csv"), 
+#                      as.is = TRUE)
+# playgrounds <- read.csv(url("https://data.cityofnewyork.us/resource/a4qt-mpr5.csv"), 
+#                         as.is = TRUE)
+# adult_exe <- read.csv(url("https://data.cityofnewyork.us/resource/tkzt-zfpz.csv"), 
+#                       as.is = TRUE)
+# ath_faci <- read.csv(url("https://data.cityofnewyork.us/resource/g3xg-qtbc.csv"), 
+#                      as.is = TRUE)
+# ath_faci <- ath_faci[ath_faci$status!='',]
+# comfort <- read.csv(url("https://data.cityofnewyork.us/resource/i5n2-q8ck.csv"), 
+#                     as.is = TRUE)
 skate_parks <- read.csv("./data/skate_parks.csv",as.is = TRUE)
 dog_runs <- read.csv("./data/dog_runs.csv", 
                      as.is = TRUE)
@@ -970,7 +984,7 @@ shinyServer(function(input, output) {
         ggtitle("Number of Symptomatic Patient Hospital Visits") +
         ylab("Symptom frequency") +
         xlab("Date") +
-        theme_ipsum()
+        theme(axis.title = element_text())
     })
     
     #========================================================================================================================================================================================
