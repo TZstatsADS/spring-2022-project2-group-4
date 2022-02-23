@@ -42,6 +42,7 @@ library(shinydashboard)
 # comfort <- read.csv(url("https://data.cityofnewyork.us/resource/i5n2-q8ck.csv"), 
 #                     as.is = TRUE)
 skate_parks <- read.csv("./data/skate_parks.csv",as.is = TRUE)
+
 dog_runs <- read.csv("./data/dog_runs.csv", 
                      as.is = TRUE)
 playgrounds <- read.csv("./data/playgrounds.csv", 
@@ -54,6 +55,8 @@ ath_faci <- ath_faci[ath_faci$status!='',]
 comfort <- read.csv("./data/comfort.csv", 
                     as.is = TRUE)
 event <- read.csv("./data/NYC_Permitted_Event_Information.csv",as.is = TRUE)
+
+
 
 
 #========================================================================================================================================================================================
@@ -285,20 +288,20 @@ shinyServer(function(input, output) {
         #For Present Map
         if(input$time=="Present"){
             #Set Color
-            palette_dog = c("black","blue", "yellow")
+            palette_dog = c("yellow","blue", "red")
             color <- colorFactor(palette =palette_dog, dog_runs$status)
             #Add Markers
-            quakeIcons <- iconList(black = makeIcon("./data/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
+            quakeIcons <- iconList(yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30),
                                    blue = makeIcon("./data/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30))
+                                   red = makeIcon("./data/red_maps_icon.png", iconWidth = 30, iconHeight = 30))
             
-            htmlIcons <- paste("<img src='https://img1.pnghut.com/5/22/2/YqsXc9MqJD/map-google-maps-pin-vector-beauty-plus-salon-maker.jpg' style='width:30px;height:30px;'>",unique(dog_runs$status)[1],"<br>
-            <img src='https://www.clipartmax.com/png/middle/95-954602_google-maps-marker-blue.png' style='width:30px;height:30px;'>",unique(dog_runs$status)[2],"<br>
-            <img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png'
+            htmlIcons <- paste("<img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png' style='width:30px;height:30px;'>",unique(dog_runs$status)[1],"<br>
+            <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png' style='width:30px;height:30px;'>",unique(dog_runs$status)[2],"<br>
+            <img src='https://www.clipartmax.com/png/middle/319-3194654_red-pin-icon-png.png'
             style='width:30px;height:30px;'>",unique(dog_runs$status)[3],"<br>")
             
             dog_runs$group <- factor(dog_runs$status,
-                                     labels = c("black", "blue", "yellow"))
+                                     labels = c("yellow", "blue", "red"))
           
             
             leafletProxy("map", data = dog_runs) %>%
@@ -324,17 +327,17 @@ shinyServer(function(input, output) {
         #For Covid-19 Peak Map
         else{
             #Set Color
-            palette_dog = c("black","yellow")
+            palette_dog = c("red","blue")
             color <- colorFactor(palette =palette_dog, dog_runs$peak_status)
             #Add Markers
-            quakeIcons <- iconList(black = makeIcon("./data/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30))
+            quakeIcons <- iconList(red = makeIcon("./data/red_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   blue = makeIcon("./data/blue_maps_icon.png", iconWidth = 30, iconHeight = 30))
             
-            htmlIcons <- paste("<img src='https://icon-library.com/images/geo-location-icon/geo-location-icon-21.jpg' style='width:30px;height:30px;'>",unique(dog_runs$peak_status)[1],"<br>
-            <img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png' style='width:30px;height:30px;'>",unique(dog_runs$peak_status)[2])
+            htmlIcons <- paste("<img src='https://www.clipartmax.com/png/middle/319-3194654_red-pin-icon-png.png' style='width:30px;height:30px;'>",unique(dog_runs$peak_status)[1],"<br>
+            <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png' style='width:30px;height:30px;'>",unique(dog_runs$peak_status)[2])
             
             dog_runs$group <- factor(dog_runs$peak_status,
-                                     labels = c("black","yellow"))
+                                     labels = c("red","blue"))
             
             leafletProxy("map", data = dog_runs) %>%
               clearShapes() %>%
@@ -363,25 +366,25 @@ shinyServer(function(input, output) {
         #For Present Map
         if(input$time=="Present"){
             #Set Color
-            palette <-  c("green","black","blue", "yellow")
+            palette <-  c("yellow","blue","green", "red")
             color <- colorFactor(palette =palette, ath_faci$status)
             #Add Markers
-            quakeIcons <- iconList(green = makeIcon("./data/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   black = makeIcon("./data/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
+            quakeIcons <- iconList(yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30),
                                    blue = makeIcon("./data/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
+                                   green = makeIcon("./data/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   red = makeIcon("./data/red_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
             
-            htmlIcons <- paste("<img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(ath_faci$status)[1],"<br>
-            <img src='https://icon-library.com/images/geo-location-icon/geo-location-icon-21.jpg' style='width:30px;height:30px;'>",unique(ath_faci$status)[2],"<br>
-            <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png'
+            htmlIcons <- paste("<img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png' style='width:30px;height:30px;'>",unique(ath_faci$status)[1],"<br>
+            <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png' style='width:30px;height:30px;'>",unique(ath_faci$status)[2],"<br>
+            <img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png'
             style='width:30px;height:30px;'>",unique(ath_faci$status)[3],"<br>
-            <img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png'
+            <img src='https://www.clipartmax.com/png/middle/319-3194654_red-pin-icon-png.png'
             style='width:30px;height:30px;'>",unique(ath_faci$status)[4])
             
             
             ath_faci$group <- factor(ath_faci$status,
-                                     labels = c("green","black", "blue", "yellow"))
+                                     labels = c("yellow","blue", "green", "red"))
             
             
             leafletProxy("map", data = ath_faci) %>%
@@ -407,23 +410,23 @@ shinyServer(function(input, output) {
         #For Covid-19 Peak Map
         else{
             #Set Color
-            palette <-  c("green","black","blue", "yellow")
+            palette <-  c("red","green","yellow", "blue")
             color <- colorFactor(palette =palette, ath_faci$peak_status)
             #Add Markers
-            quakeIcons <- iconList(green = makeIcon("./data/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   black = makeIcon("./data/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   blue = makeIcon("./data/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
+            quakeIcons <- iconList(red = makeIcon("./data/red_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   green = makeIcon("./data/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   blue = makeIcon("./data/blue_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
-            htmlIcons <- paste("<img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(ath_faci$peak_status)[1],"<br>
-            <img src='https://icon-library.com/images/geo-location-icon/geo-location-icon-21.jpg' style='width:30px;height:30px;'>",unique(ath_faci$peak_status)[2],"<br>
-            <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png'
-            style='width:30px;height:30px;'>",unique(ath_faci$peak_status)[3],"<br>
+            htmlIcons <- paste("<img src='https://www.clipartmax.com/png/middle/319-3194654_red-pin-icon-png.png' style='width:30px;height:30px;'>",unique(ath_faci$peak_status)[1],"<br>
+            <img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(ath_faci$peak_status)[2],"<br>
             <img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png'
+            style='width:30px;height:30px;'>",unique(ath_faci$peak_status)[3],"<br>
+            <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png'
             style='width:30px;height:30px;'>",unique(ath_faci$peak_status)[4])
             
             ath_faci$group <- factor(ath_faci$peak_status,
-                                     labels = c("green","black", "blue", "yellow"))
+                                     labels = c("red","green", "yellow", "blue"))
             
             
             leafletProxy("map", data = ath_faci) %>%
@@ -452,23 +455,23 @@ shinyServer(function(input, output) {
         #For Present Map
         if(input$time=="Present"){
             #Set Color
-            palette <-  c("green","black","blue", "yellow")
+            palette <-  c("yellow","red","blue", "green")
             color <- colorFactor(palette =palette, comfort$status)
             #Add Markers
-            quakeIcons <- iconList(green = makeIcon("./data/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   black = makeIcon("./data/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
+            quakeIcons <- iconList(yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   red = makeIcon("./data/red_maps_icon.png", iconWidth = 30, iconHeight = 30),
                                    blue = makeIcon("./data/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
+                                   green = makeIcon("./data/green_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
-            htmlIcons <- paste("<img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(comfort$status)[1],"<br>
-            <img src='https://icon-library.com/images/geo-location-icon/geo-location-icon-21.jpg' style='width:30px;height:30px;'>",unique(comfort$status)[2],"<br>
+            htmlIcons <- paste("<img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png' style='width:30px;height:30px;'>",unique(comfort$status)[1],"<br>
+            <img src='https://www.clipartmax.com/png/middle/319-3194654_red-pin-icon-png.png' style='width:30px;height:30px;'>",unique(comfort$status)[2],"<br>
             <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png'
             style='width:30px;height:30px;'>",unique(comfort$status)[3],"<br>
-            <img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png'
+            <img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png'
             style='width:30px;height:30px;'>",unique(comfort$status)[4])
             
             comfort$group <- factor(comfort$status,
-                                    labels = c("green","black", "blue", "yellow"))
+                                    labels = c("yellow","red", "blue", "green"))
             
             
             leafletProxy("map", data = comfort) %>%
@@ -493,23 +496,23 @@ shinyServer(function(input, output) {
         #For Covid-19 Peak Map
         else{
             #Set Color
-            palette <-  c("green","black","blue", "yellow")
+            palette <-  c("green","red","blue", "yellow")
             color <- colorFactor(palette =palette, comfort$peak_status)
             #Add Markers
             quakeIcons <- iconList(green = makeIcon("./data/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   black = makeIcon("./data/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   red = makeIcon("./data/red_maps_icon.png", iconWidth = 30, iconHeight = 30),
                                    blue = makeIcon("./data/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
                                    yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
             htmlIcons <- paste("<img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(comfort$peak_status)[1],"<br>
-            <img src='https://icon-library.com/images/geo-location-icon/geo-location-icon-21.jpg' style='width:30px;height:30px;'>",unique(comfort$peak_status)[2],"<br>
+            <img src='https://www.clipartmax.com/png/middle/319-3194654_red-pin-icon-png.png' style='width:30px;height:30px;'>",unique(comfort$peak_status)[2],"<br>
             <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png'
             style='width:30px;height:30px;'>",unique(comfort$peak_status)[3],"<br>
             <img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png'
             style='width:30px;height:30px;'>",unique(comfort$peak_status)[4])
             
             comfort$group <- factor(comfort$peak_status,
-                                    labels = c("green","black", "blue", "yellow"))
+                                    labels = c("green","red", "blue", "yellow"))
             
             
             leafletProxy("map", data = comfort) %>%
@@ -538,18 +541,18 @@ shinyServer(function(input, output) {
         #For Present Map
         if(input$time=="Present"){
             #Set Color
-            palette <-  c("green", "yellow")
+            palette <-  c("yellow", "blue")
             color <- colorFactor(palette =palette, skate_parks$status)
             #Add Markers
-            quakeIcons <- iconList(green = makeIcon("./data/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
+            quakeIcons <- iconList(yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                    blue = makeIcon("./data/blue_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
-            htmlIcons <- paste("<img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(skate_parks$status)[1],"<br>
-            <img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png' style='width:30px;height:30px;'>",unique(skate_parks$status)[2])
+            htmlIcons <- paste("<img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png' style='width:30px;height:30px;'>",unique(skate_parks$status)[1],"<br>
+            <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png' style='width:30px;height:30px;'>",unique(skate_parks$status)[2])
             
             
             skate_parks$group <- factor(skate_parks$status,
-                                        labels = c("green","yellow"))
+                                        labels = c("yellow","blue"))
             
             
             leafletProxy("map", data = skate_parks) %>%
@@ -575,20 +578,20 @@ shinyServer(function(input, output) {
         #For Covid-19 Peak Map
         else{
             #Set Color
-            palette <-  c("black","green", "yellow")
+            palette <-  c("red","blue", "yellow")
             color <- colorFactor(palette =palette, skate_parks$peak_status)
             #Add Markers
-            quakeIcons <- iconList(black = makeIcon("./data/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
+            quakeIcons <- iconList(red = makeIcon("./data/red_maps_icon.png", iconWidth = 30, iconHeight = 30),
                                    blue = makeIcon("./data/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
                                    yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
-            htmlIcons <- paste("<img src='https://icon-library.com/images/geo-location-icon/geo-location-icon-21.jpg' style='width:30px;height:30px;'>",unique(skate_parks$peak_status)[1],"<br>
+            htmlIcons <- paste("<img src='https://www.clipartmax.com/png/middle/319-3194654_red-pin-icon-png.png' style='width:30px;height:30px;'>",unique(skate_parks$peak_status)[1],"<br>
             <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png' style='width:30px;height:30px;'>",unique(skate_parks$peak_status)[2],"<br>
             <img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png' style='width:30px;height:30px;'>",unique(skate_parks$peak_status)[3])
             
             
             skate_parks$group <- factor(skate_parks$peak_status,
-                                        labels = c("black","blue","yellow"))
+                                        labels = c("red","blue","yellow"))
             
             
             leafletProxy("map", data = skate_parks) %>%
@@ -617,23 +620,23 @@ shinyServer(function(input, output) {
         #For Present Map
         if(input$time=="Present"){
             #Set Color
-            palette <-  c("green","black","blue", "yellow")
+            palette <-  c("yellow","blue","red", "green")
             color <- colorFactor(palette =palette, playgrounds$status)
             #Add Markers
-            quakeIcons <- iconList(green = makeIcon("./data/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   black = makeIcon("./data/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
+            quakeIcons <- iconList(yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30),
                                    blue = makeIcon("./data/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
+                                   red = makeIcon("./data/red_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   green = makeIcon("./data/green_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
-            htmlIcons <- paste("<img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(playgrounds$status)[1],"<br>
-            <img src='https://icon-library.com/images/geo-location-icon/geo-location-icon-21.jpg' style='width:30px;height:30px;'>",unique(playgrounds$status)[2],"<br>
-            <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png'
+            htmlIcons <- paste("<img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png' style='width:30px;height:30px;'>",unique(playgrounds$status)[1],"<br>
+            <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png' style='width:30px;height:30px;'>",unique(playgrounds$status)[2],"<br>
+            <img src='https://www.clipartmax.com/png/middle/319-3194654_red-pin-icon-png.png'
             style='width:30px;height:30px;'>",unique(playgrounds$status)[3],"<br>
-            <img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png'
+            <img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png'
             style='width:30px;height:30px;'>",unique(playgrounds$status)[4])
             
             playgrounds$group <- factor(playgrounds$status,
-                                        labels = c("green","black", "blue", "yellow"))
+                                        labels = c("yellow","blue", "red", "green"))
             
             
             leafletProxy("map", data = playgrounds) %>%
@@ -659,23 +662,23 @@ shinyServer(function(input, output) {
         #For Covid-19 Peak Map
         else{
             #Set Color
-            palette <-  c("green","black","blue", "yellow")
+            palette <-  c("red","blue","yellow", "green")
             color <- colorFactor(palette =palette, playgrounds$peak_status)
             #Add Markers
-            quakeIcons <- iconList(green = makeIcon("./data/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   black = makeIcon("./data/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
+            quakeIcons <- iconList(red = makeIcon("./data/red_maps_icon.png", iconWidth = 30, iconHeight = 30),
                                    blue = makeIcon("./data/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
+                                   yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   green = makeIcon("./data/green_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
-            htmlIcons <- paste("<img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(playgrounds$peak_status)[1],"<br>
-            <img src='https://icon-library.com/images/geo-location-icon/geo-location-icon-21.jpg' style='width:30px;height:30px;'>",unique(playgrounds$peak_status)[2],"<br>
-            <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png'
-            style='width:30px;height:30px;'>",unique(playgrounds$peak_status)[3],"<br>
+            htmlIcons <- paste("<img src='https://www.clipartmax.com/png/middle/319-3194654_red-pin-icon-png.png' style='width:30px;height:30px;'>",unique(playgrounds$peak_status)[1],"<br>
+            <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png' style='width:30px;height:30px;'>",unique(playgrounds$peak_status)[2],"<br>
             <img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png'
+            style='width:30px;height:30px;'>",unique(playgrounds$peak_status)[3],"<br>
+            <img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png'
             style='width:30px;height:30px;'>",unique(playgrounds$peak_status)[4])
             
             playgrounds$group <- factor(playgrounds$peak_status,
-                                        labels = c("green","black", "blue", "yellow"))
+                                        labels = c("red","blue", "yellow", "green"))
             
             
             leafletProxy("map", data = playgrounds) %>%
@@ -705,21 +708,21 @@ shinyServer(function(input, output) {
         #For Present Map
         if(input$time=="Present"){
             #Set Color
-            palette <-  c("green","blue", "yellow")
+            palette <-  c("green","yellow", "blue")
             color <- colorFactor(palette =palette, adult_exe$status)
             #Add Markers
             quakeIcons <- iconList(green = makeIcon("./data/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   blue = makeIcon("./data/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
+                                   yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   blue = makeIcon("./data/blue_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
             htmlIcons <- paste("<img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(adult_exe$status)[1],"<br>
-            <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png'
-            style='width:30px;height:30px;'>",unique(adult_exe$status)[2],"<br>
             <img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png'
+            style='width:30px;height:30px;'>",unique(adult_exe$status)[2],"<br>
+            <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png'
             style='width:30px;height:30px;'>",unique(adult_exe$status)[3])
             
             adult_exe$group <- factor(adult_exe$status,
-                                      labels = c("green","blue", "yellow"))
+                                      labels = c("green","yellow", "blue"))
             
             
             leafletProxy("map", data = adult_exe) %>%
@@ -744,23 +747,23 @@ shinyServer(function(input, output) {
         #For Covid-19 Peak Map
         else{
             #Set Color
-            palette <-  c("green","black","blue", "yellow")
+            palette <-  c("green","red","yellow", "blue")
             color <- colorFactor(palette =palette, adult_exe$peak_status)
             #Add Markers
             quakeIcons <- iconList(green = makeIcon("./data/green_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   black = makeIcon("./data/black_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   blue = makeIcon("./data/blue_maps_icon.png", iconWidth = 30, iconHeight = 30),
-                                   yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30)
+                                   red = makeIcon("./data/red_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   yellow = makeIcon("./data/yellow_maps_icon.png", iconWidth = 30, iconHeight = 30),
+                                   blue = makeIcon("./data/blue_maps_icon.png", iconWidth = 30, iconHeight = 30)
             )
             htmlIcons <- paste("<img src='https://www.nicepng.com/png/detail/801-8019553_location-marker-icon-google-maps-pointer-elsavadorla-google.png' style='width:30px;height:30px;'>",unique(adult_exe$peak_status)[1],"<br>
-            <img src='https://icon-library.com/images/geo-location-icon/geo-location-icon-21.jpg' style='width:30px;height:30px;'>",unique(adult_exe$peak_status)[2],"<br>
-            <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png'
-            style='width:30px;height:30px;'>",unique(adult_exe$peak_status)[3],"<br>
+            <img src='https://www.clipartmax.com/png/middle/319-3194654_red-pin-icon-png.png' style='width:30px;height:30px;'>",unique(adult_exe$peak_status)[2],"<br>
             <img src='https://w7.pngwing.com/pngs/64/563/png-transparent-google-maps-computer-icons-hot-pie-pizza-information-map-angle-text-logo-thumbnail.png'
+            style='width:30px;height:30px;'>",unique(adult_exe$peak_status)[3],"<br>
+            <img src='https://www.nicepng.com/png/detail/15-159490_small-google-maps-marker-blue.png'
             style='width:30px;height:30px;'>",unique(adult_exe$peak_status)[4])
             
             adult_exe$group <- factor(adult_exe$peak_status,
-                                      labels = c("green","black","blue", "yellow"))
+                                      labels = c("green","red","yellow", "blue"))
             
             
             leafletProxy("map", data = adult_exe) %>%

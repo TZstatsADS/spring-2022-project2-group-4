@@ -5,9 +5,9 @@ account: group4goout
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 5713052
-bundleId: 5610843
+bundleId: 5611621
 url: https://group4goout.shinyapps.io/GoOutapp/
-when: 1645641590.42716
-lastSyncTime: 1645641590.42716
+when: 1645655073.81755
+lastSyncTime: 1645655073.81755
 asMultiple: FALSE
 asStatic: FALSE
