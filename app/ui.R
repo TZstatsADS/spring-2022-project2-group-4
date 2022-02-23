@@ -1,7 +1,7 @@
 #========================================================================================================================================================================================
 #Package
 
-packages.used=c("shiny","dplyr","tidyverse","leaflet","shinythemes","shinyWidgets")
+packages.used=c("shiny","dplyr","tidyverse","leaflet","shinythemes","shinyWidgets","shinydashboard")
 # Check for packages that need to be installed.
 packages.needed=setdiff(packages.used, 
                         intersect(installed.packages()[,1], 
@@ -26,7 +26,7 @@ library(highcharter)
 library(RColorBrewer)
 if(!require(fontawesome)) devtools::install_github("rstudio/fontawesome")
 library(geojsonio)
-
+library(shinydashboard)
 #========================================================================================================================================================================================
 #Park Tab
 shinyUI(
