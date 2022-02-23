@@ -4,8 +4,7 @@
 
 ![screenshot](doc/figs/Restuarants.PNG)
 
-In this second project of GR5243 Applied Data Science, we develop an Outing Avenues in NYC in times of Covid-19* shiny app. This app combines different data sources to provide a ones stop solution for all outing avenues. It also integrates health with all outing avenues to keep the users updated with Covid-19 or other outbreaks in different areas. From dog parks to athletic facilities, from events to restaurants, the app is for all purposes. See [Project 2 Description](doc/project2_desc.md) for more details.  
-
+In this second project of GR5243 Applied Data Science, we develop an Outing Avenues in NYC in times of Covid-19* shiny app. This app combines different data sources to provide a ones stop solution for all outing avenues. It also integrates health with all outing avenues to keep the users updated with Covid-19 or other outbreaks in different areas. From dog parks to athletic facilities, from events to restaurants, the app is for all purposes. 
 The **objective** of this app are:
 
 - let people explore and enjoy all outing avenues by keeping in mind the recent outbreak
